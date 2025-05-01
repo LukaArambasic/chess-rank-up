@@ -1,5 +1,6 @@
 import {createContext, useContext, useState, useEffect} from "react";
 import api from "../api";
+import {useNavigate} from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -14,7 +15,7 @@ export const AuthProvider = ({children}) => {
             .then(response => {
                 localStorage.setItem('token', response.data.token);
                 let user = response.data.user;
-                user = {...user, id: response.data.id};
+                user = {...user, id: response.data.id, role:response.data.isAdmin};
                 setUser(user);})
             .catch(error => {
                 console.log("Erroroorroroorrorooror")
@@ -30,7 +31,12 @@ export const AuthProvider = ({children}) => {
 
     const checkUser = async () => {
         await api.get('auth/me')
-            .then(response => setUser(response.data.user))
+            .then(response => {
+                console.log("Me called", response.data.user);
+                let successUser = response.data.user;
+                successUser = {...successUser, id: response.data.id};
+                setUser(successUser);
+            })
             .catch(error => logout());
     }
 

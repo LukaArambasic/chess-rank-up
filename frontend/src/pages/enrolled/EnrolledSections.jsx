@@ -9,7 +9,7 @@ import {useSection} from "../../contexts/SectionProvider";
 
 const EnrolledSections = () => {
     const {user} = useAuth();
-    const {setSectionId} = useSection();
+    const {setSection} = useSection();
     const [selectedSection, setSelectedSection] = useState(null);
     const nav = useNavigate();
     const [mySections, setMySections] = useState([]);
@@ -18,7 +18,6 @@ const EnrolledSections = () => {
     useEffect(() => {
         async function fetchData() {
             await api.get(`members/${user.id}/sections`).then(response => {
-                console.log(response.data)
                 setMySections(response.data);
             }).catch(error => {
                 console.log("Error: ", error);
@@ -28,14 +27,14 @@ const EnrolledSections = () => {
     }, []);
 
     const handleSectionClick = (section) => {
-        setSectionId(section.id);
-        console.log("napravio sam to");
-        nav(`/profile`);
-        if (selectedSection !== null && selectedSection.id === section.id) {
-            return;
-        } else {
-            setSelectedSection(section)
+        let role = "user";
+        let navPath = "/profile";
+        if (section.rank==="Kralj") {
+            role="admin";
+            navPath="/admin";
         }
+        setSection(section.id,role);
+        nav(navPath);
     };
 
     return (

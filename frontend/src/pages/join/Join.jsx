@@ -12,7 +12,7 @@ const Join = () => {
     const [sections, setSections] = useState([]);
     const nav = useNavigate();
     const {user} = useAuth();
-    const {setSectionId} = useSection();
+    const {setSection} = useSection();
 
     useEffect(() => {
         // TODO: Add axios to fetch sections from an API
@@ -50,7 +50,7 @@ const Join = () => {
         await api.post(`sections/${id}/members`, {rankName: "Pijun", jmbag: user.jmbag})
             .then(response => {
                 console.log("Added section successfully!", response.data);
-                setSectionId(id);
+                setSection(id, "user");
                 nav(`/profile`);
             })
             .catch(error => {

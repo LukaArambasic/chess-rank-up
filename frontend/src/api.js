@@ -17,7 +17,9 @@ api.interceptors.request.use(
         // ako URL završava jednim od njih, samo vrati config bez mijenjanja
         if (!skipAuth.some(ep => config.url.endsWith(ep))) {
             const token = localStorage.getItem('token');
+            console.log("Should add the token");
             if (token) {
+                console.log("Added the token");
                 config.headers.Authorization = `Bearer ${token}`;
             }
         }

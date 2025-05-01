@@ -1,12 +1,12 @@
 // src/App.js
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import Activity from './pages/activity/Activity';
 import Login from './pages/login/Login';
 import Reset from './pages/reset/Reset';
 import ScoreboardList from './pages/scoreboard/ScoreboardList';
 
-import {Route, BrowserRouter as Router, Routes, Outlet, Navigate} from 'react-router-dom';
+import {Route, BrowserRouter as Router, Routes, Outlet, Navigate, useNavigate} from 'react-router-dom';
 import HomePage from './pages/home/HomePage';
 import Profile from './pages/profile/Profile';
 import Scoreboard from './pages/scoreboard/Scoreboard';
@@ -17,13 +17,26 @@ import Section from './pages/section/Section';
 import Join from './pages/join/Join';
 import Post from './pages/post/Post';
 import Admin from './pages/admin/Admin';
-import AddPoints from './pages/admin/addPoints/AddPoints';
-import AddEvents from './pages/admin/addEvents/AddEvents';
-import AddNews from './pages/admin/addNews/AddNews';
-import AllUsers from './pages/admin/allUsers/AllUsers';
+import AutomaticPoints from './pages/admin/points/AutomaticPoints';
+import AddEvent from './pages/admin/events/AddEvent';
+import AllUsers from './pages/admin/users/AllUsers';
 import EnrolledSections from "./pages/enrolled/EnrolledSections";
 import {AuthProvider, useAuth} from "./contexts/AuthProvider";
-import {SectionProvider} from "./contexts/SectionProvider";
+import {SectionProvider, useSection} from "./contexts/SectionProvider";
+import PointsOptions from "./pages/admin/points/PointsOptions";
+import ManualPoints from "./pages/admin/points/ManualPoints";
+import EventsOptions from "./pages/admin/events/EventsOptions";
+import AllEvents from "./pages/admin/events/AllEvents";
+import AdminEvent from "./pages/admin/events/Event";
+import Superadmin from "./pages/superadmin/Superadmin";
+import SemestersOptions from "./pages/superadmin/semesters/SemestersOptions";
+import AddSemester from "./pages/superadmin/semesters/AddSemester";
+import AllSemesters from "./pages/superadmin/semesters/AllSemesters";
+import SectionsOptions from "./pages/superadmin/sections/SectionsOptions";
+import AddSection from "./pages/superadmin/sections/AddSection";
+import AllSections from "./pages/superadmin/sections/AllSections";
+import AdminSection from "./pages/superadmin/sections/AdminSection";
+import AddAdmin from "./pages/superadmin/sections/AddAdmin";
 
 const sections = [
   { id: 1, name: 'Šahovska sekcija', description: 'Igramo šah', to:"/profile" },
@@ -35,6 +48,13 @@ const PrivateRoute = () => {
   const {user} = useAuth();
   return user ? <Outlet /> : <Navigate to='/login' replace />
 }
+
+const AdminRoute = () => {
+  const {user} = useAuth();
+  const {sectionRole} = useSection();
+  return (user && sectionRole==="admin") ? <Outlet /> : <Navigate to="/login" />
+}
+
 
 function App() {
 
@@ -70,14 +90,35 @@ function App() {
               <Route path="/section/:id" element={<Section />} />
             </Route>
 
+            <Route element={<AdminRoute />}>
+              <Route path='/admin' element={<Admin />} />
+              <Route path='/admin/points' element={<PointsOptions />} />
+              <Route path='/admin/points/automatic' element={<AutomaticPoints  />} />
+              <Route path='/admin/points/manual' element={<ManualPoints  />} />
+              <Route path='/admin/events' element={<EventsOptions  />} />
+              <Route path='/admin/events/add' element={<AddEvent  />} />
+              <Route path='/admin/events/all' element={<AllEvents  />} />
+              <Route path='/admin/events/:id' element={<AdminEvent  />} />
+              <Route path='/admin/all-users' element={<AllUsers  />} />
+            </Route>
+
+
+            <Route path="/superadmin" element={<Superadmin />} />
+
+            <Route path="/superadmin/sections" element={<SectionsOptions />} />
+            <Route path="/superadmin/sections/add" element={<AddSection />} />
+            <Route path="/superadmin/sections/all" element={<AllSections />} />
+            <Route path="/superadmin/sections/:id" element={<AdminSection />} />
+            <Route path="/superadmin/sections/:id/edit" element={<AddSection />} />
+            <Route path="/superadmin/sections/:id/add-admin" element={<AddAdmin />} />
+
+            <Route path="/superadmin/semesters" element={<SemestersOptions />} />
+            <Route path="/superadmin/semesters/add" element={<AddSemester />} />
+            <Route path="/superadmin/semesters/all" element={<AllSemesters />} />
+            <Route path="/superadmin/semesters/:id" element={<AddSemester />} />
 
 
 
-            <Route path='/admin' element={<Admin />} />
-            <Route path='/admin/add-points' element={<AddPoints  />} />
-            <Route path='/admin/add-events' element={<AddEvents  />} />
-            <Route path='/admin/add-news' element={<AddNews  />} />
-            <Route path='/admin/all-users' element={<AllUsers  />} />
 
           </Routes>
         </Router>
