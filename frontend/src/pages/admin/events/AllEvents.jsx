@@ -49,7 +49,7 @@ const AdminEventsPage = () => {
 
     function formatDateCro(isoDate) {
         const [year, month, day] = isoDate.split('-');
-        return `${Number(day)}.${Number(month)}.${year}`;
+        return `${Number(day)}.${Number(month)}.${year}.`;
     }
 
     const handleRowClick = (id) => {

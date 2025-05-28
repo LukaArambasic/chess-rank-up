@@ -8,7 +8,6 @@ export const SectionProvider = ({children}) => {
 
     useEffect(() => {
         const id = localStorage.getItem('sectionId');
-        console.log("Check if id");
         if (id) setSectionId(id);
     }, []);
 

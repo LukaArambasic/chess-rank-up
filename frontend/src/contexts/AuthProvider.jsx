@@ -32,7 +32,6 @@ export const AuthProvider = ({children}) => {
     const checkUser = async () => {
         await api.get('auth/me')
             .then(response => {
-                console.log("Me called", response.data.user);
                 let successUser = response.data.user;
                 successUser = {...successUser, id: response.data.id};
                 setUser(successUser);

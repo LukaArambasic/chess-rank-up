@@ -15,24 +15,22 @@ const AddSection = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const section = { id: 1, name: "Proljetni semestar 2025", description: "2025-02-01"}
-            setName(section.name);
-            setDescription(section.description);
-            /*await api.get(`/semesters/${id}`)
+
+            await api.get(`/sections/${id}`)
                 .then(response => {
                     setName(response.data.name);
-                    setDateFrom(response.data.description);
+                    setDescription(response.data.descriptionUrl);
                 })
                 .catch(error => {
                     console.log("Error fetching data: ", error);
-                })*/
+                })
         }
         if (id) fetchData();
     }, []);
 
     const handleCreate = async () => {
         // ovdje su ti već vrijednosti iz inputa
-        await api.post(`sections`, {
+        await api.post(id?`sections/${id}`:`sections`, {
             name: name,
             description: description
         })

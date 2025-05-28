@@ -5,32 +5,26 @@ import { faBars, faTimes, faHome, faUser, faInfoCircle, faNewspaper, faCalendar,
 import { Link, useNavigate } from 'react-router-dom'
 import "./Navigation.css"
 import {useSection} from "../../contexts/SectionProvider";
+import {useAuth} from "../../contexts/AuthProvider";
 
 
 const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setLoggedIn] = useState(true);
     const navigate = useNavigate();
     const {sectionId} = useSection();
+    const {user, logout} = useAuth()
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
 
     const handleLogout = () => {
-        console.log("Handeling logout...");
-        localStorage.removeItem("idMember");
-        localStorage.removeItem("firstName");
-        localStorage.removeItem("lastName");
-        localStorage.removeItem("idSection");
-        localStorage.removeItem("token");
-
-        //provjeriti treba li još nešto obrisati prilikom odjave
-        navigate('/');
+        logout();
+        navigate('/login')
     }
 
     const handleLogin = () => {
-        navigate("login")
+        navigate("/login")
     }
 
     const handleNavigate = (path) => {
@@ -51,7 +45,7 @@ const Navigation = () => {
                     <div id="navbarIcon2" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faTimes} size={'lg'}/>
                     </div>
-                    {isLoggedIn && (
+                    {user && (
                         <ul id='navbarList'>
                             <li><a onClick={()=>navigate("/")}><FontAwesomeIcon icon={faHome} /> Home</a></li>
                             <li><a onClick={()=>handleNavigate(`/profile`)}><FontAwesomeIcon icon={faUser} /> Profil</a></li>
@@ -61,7 +55,7 @@ const Navigation = () => {
                             <li><button id='navbarButton' onClick={handleLogout}>Odjava</button></li>    
                         </ul>
                     )}
-                    {!isLoggedIn && (
+                    {!user && (
                         <ul id='navbarList'>
                             <li><a onClick={()=>navigate("/")}><FontAwesomeIcon icon={faHome} /> Home</a></li>
                             <li><a onClick={()=>navigate("/about")}><FontAwesomeIcon icon={faQuestion} /> O aplikaciji</a></li>

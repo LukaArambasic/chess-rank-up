@@ -32,7 +32,7 @@ const Login = () => {
                     type="email"
                     className="inputStyle"
                     placeholder="Email"
-                    value="jj56789@fer.hr"
+                    value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
                 />
@@ -40,7 +40,7 @@ const Login = () => {
                     type="password"
                     className="inputStyle"
                     placeholder="Lozinka"
-                    value="password1"
+                    value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                 />

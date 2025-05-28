@@ -26,29 +26,24 @@ const AdminEventsPage = () => {
     const navigate = useNavigate();
 
     // Example initial data; replace or fetch from API as needed
-    const [semesters, setSemesters] = useState([
-        { id: 1, name: "Proljetni semestar 2025", dateFrom: "2025-02-01", dateTo: "2025-06-30" },
-        { id: 2, name: "Ljetni semestar 2025", dateFrom: "2025-07-01", dateTo: "2025-10-15" },
-        { id: 3, name: "Zimski semestar 2024/25", dateFrom: "2024-11-01", dateTo: "2025-01-31" },
-        { id: 4, name: "Jesenski semestar 2025", dateFrom: "2025-09-01", dateTo: "2025-12-15" }
-    ]);
+    const [sections, setSections] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
             await api.get(`sections`)
                 .then(response => {
                     console.log(response.data)
-                    setSemesters(response.data);
+                    setSections(response.data);
                 })
                 .catch(error => {
                     console.log("Error fetching data ", error);
                 })
         }
-        //fetchData();
+        fetchData();
     }, []);
 
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [semesterToRemove, setSemesterToRemove] = useState(null);
+    const [sectionToRemove, setSectionToRemove] = useState(null);
 
     function formatDateCro(isoDate) {
         const [year, month, day] = isoDate.split('-');
@@ -59,23 +54,23 @@ const AdminEventsPage = () => {
         navigate(`/superadmin/sections/${id}`);
     };
 
-    const openConfirmDialog = (semester, e) => {
+    const openConfirmDialog = (section, e) => {
         e.stopPropagation();
-        console.log(semester)
-        setSemesterToRemove(semester);
+        console.log(section)
+        setSectionToRemove(section);
         setDialogOpen(true);
     };
 
     const closeConfirmDialog = () => {
         setDialogOpen(false);
-        setSemesterToRemove(null);
+        setSectionToRemove(null);
     };
 
     const confirmRemove = async () => {
-        await api.delete(`semesters/${semesterToRemove.id}`)
+        await api.delete(`sections/${sectionToRemove.id}`)
             .then(response => {
                 console.log(response.data);
-                setSemesters((prev) => prev.filter((ev) => ev.id !== semesterToRemove.id));
+                setSections((prev) => prev.filter((ev) => ev.id !== sectionToRemove.id));
             })
             .catch(error => {
                 console.log("Error deleting data, ", error);
@@ -94,26 +89,24 @@ const AdminEventsPage = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Naziv događaja</TableCell>
-                            <TableCell>Datum</TableCell>
-                            <TableCell>Bodovi</TableCell>
+                            <TableCell>Ime sekcije</TableCell>
+                            <TableCell>Opis sekcije</TableCell>
                             <TableCell align="center">Akcije</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {semesters && semesters.map((semester) => (
+                        {sections && sections.map((section) => (
                             <TableRow
-                                key={semester.id}
+                                key={section.id}
                                 hover
                                 style={{ cursor: 'pointer' }}
-                                onClick={() => handleRowClick(semester.id)}
+                                onClick={() => handleRowClick(section.id)}
                             >
-                                <TableCell>{semester.name}</TableCell>
-                                <TableCell>{formatDateCro(semester.dateFrom)}</TableCell>
-                                <TableCell>{formatDateCro(semester.dateTo)}</TableCell>
+                                <TableCell>{section.name}</TableCell>
+                                <TableCell>{section.descriptionUrl.slice(0,15)}...</TableCell>
                                 <TableCell align="center">
                                     <IconButton
-                                        onClick={(e) => openConfirmDialog(semester, e)}
+                                        onClick={(e) => openConfirmDialog(section, e)}
                                     >
                                         <FontAwesomeIcon icon={faTrash} />
                                     </IconButton>
@@ -129,7 +122,7 @@ const AdminEventsPage = () => {
                 <DialogTitle>Potvrdi brisanje</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {`Jeste li sigurni da želite obrisati event "${semesterToRemove ? semesterToRemove.name+' '+formatDateCro(semesterToRemove.dateFrom)+'-'+formatDateCro(semesterToRemove.dateTo) : ''}"?`}
+                        {`Jeste li sigurni da želite obrisati event "${sectionToRemove ? sectionToRemove.name : ''}"?`}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

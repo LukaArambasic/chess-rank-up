@@ -17,11 +17,7 @@ const AddSemester = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const semester = { id: 1, name: "Proljetni semestar 2025", dateFrom: "2025-02-01", dateTo: "2025-06-30" }
-            setName(semester.name);
-            setDateTo(semester.dateTo);
-            setDateFrom(semester.dateFrom);
-            /*await api.get(`/semesters/${id}`)
+            await api.get(`/semesters/${id}`)
                 .then(response => {
                     setName(response.data.name);
                     setDateFrom(response.data.dateFrom);
@@ -29,24 +25,23 @@ const AddSemester = () => {
                 })
                 .catch(error => {
                     console.log("Error fetching data: ", error);
-                })*/
+                });
         }
         if (id) fetchData();
     }, []);
 
     const handleCreate = async () => {
         // ovdje su ti već vrijednosti iz inputa
-        await api.post(`sections/${sectionId}/event`, {
+        await api.post(id?`semesters/${id}`:`semesters`, {
             name: name,
             dateFrom: dateFrom,
             dateTo: dateTo,
-            description: "Fake.",
         })
             .then(response => {
-                console.log("Successfully created new event!", response.data);
+                console.log("Successfully created new semester!", response.data);
             })
             .catch(error => {
-                console.log("Error creating new post: ", error)
+                console.log("Error creating new semester: ", error)
             })
     }
 

@@ -30,6 +30,10 @@ const AdminEvent = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const [event, setEvent] = useState(null);
+    const [users, setUsers] = useState([]);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [userToRemove, setUserToRemove] = useState(null);
 
     useEffect(() => {
         console.log("Section id: ",sectionId)
@@ -38,6 +42,11 @@ const AdminEvent = () => {
                 .then(response => {
                     console.log(response.data)
                     setEvent(response.data);
+                    return api.get(`sections/${sectionId}/participations/event/${id}`)
+                })
+                .then(response => {
+                    console.log(response.data);
+                    setUsers(response.data);
                 })
                 .catch(error => {
                     console.log("Error fetching data ", error);
@@ -45,16 +54,6 @@ const AdminEvent = () => {
         }
         fetchData();
     }, []);
-
-    const usersData = [
-        { name: 'John', surname: 'Doe', jmbag: '0036530114', email: 'john.doe@example.com' },
-        { name: 'Jane', surname: 'Smith', jmbag: '0036530113', email: 'jane.smith@example.com' },
-        { name: 'Tom', surname: 'Brown', jmbag: '0036530115', email: 'tom.brown@example.com' }
-    ];
-    const [users, setUsers] = useState(usersData);
-
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [userToRemove, setUserToRemove] = useState(null);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -72,25 +71,35 @@ const AdminEvent = () => {
 
     const confirmRemove = () => {
         if (userToRemove) {
+            deleteUser();
             setUsers((prev) => prev.filter((u) => u.jmbag !== userToRemove.jmbag));
         }
         closeConfirmDialog();
     };
 
+    async function deleteUser() {
+        await api.delete(`sections/${sectionId}/participations/${id}/${userToRemove.id}`)
+            .then(response => {
+                console.log("Successfully deleted: ", response.data);
+            })
+            .catch(error => {
+                console.error("Error deleting data: ", error);
+            })
+    }
+
     function formatDateCro(isoDate) {
-        console.log("IsoDate:", isoDate);
         const [year, month, day] = isoDate.split('-');
         return `${Number(day)}.${Number(month)}.${year}.`;
     }
 
     const filteredUsers = users.filter((user) => {
-        const fullName = `${user.name.toLowerCase()} ${user.surname.toLowerCase()}`;
+        const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         const query = searchQuery.trim().toLowerCase();
         return (
-            user.name.toLowerCase().includes(query) ||
-            user.surname.toLowerCase().includes(query) ||
-            user.jmbag.includes(query) ||
+            user.firstName.toLowerCase().includes(query) ||
+            user.lastName.toLowerCase().includes(query) ||
             user.email.toLowerCase().includes(query) ||
+            user.jmbag.includes(query) ||
             fullName.includes(query)
         );
     });
@@ -98,7 +107,7 @@ const AdminEvent = () => {
     return (
 
         <div className="container">
-            {event && (
+            {event && users && (
                 <>
             <TitleContainer title={`Event: ${event.name}`} description="Pogledaj listu svih sudionika" />
             <div className="aboutText">
@@ -119,7 +128,7 @@ const AdminEvent = () => {
                 <h2>Sudionici</h2>
 
                 <div style={{ width: '90%', margin: '10px 0px' }}>
-                    <Button variant="contained" onClick={() => navigate('/admin/points/manual')}
+                    <Button variant="contained" onClick={() => navigate(`/admin/points/manual/${id}`)}
                     >
                         Dodaj sudionika
                     </Button>
@@ -147,7 +156,7 @@ const AdminEvent = () => {
                             {filteredUsers.length > 0 ? (
                                 filteredUsers.map((user) => (
                                     <TableRow key={user.jmbag} hover>
-                                        <TableCell>{user.surname}, {user.name}</TableCell>
+                                        <TableCell>{user.lastName}, {user.firstName}</TableCell>
                                         <TableCell>{user.jmbag}</TableCell>
                                         <TableCell align="center">
                                             <IconButton onClick={() => openConfirmDialog(user)}>
@@ -177,7 +186,7 @@ const AdminEvent = () => {
                     <DialogContent>
                         <DialogContentText>
                             Jeste li sigurni da želite ukloniti sudionika {
-                            userToRemove ? `${userToRemove.surname}, ${userToRemove.name}` : ''
+                            userToRemove ? `${userToRemove.lastName}, ${userToRemove.firstName} ${userToRemove.jmbag}` : ''
                         }?
                         </DialogContentText>
                     </DialogContent>

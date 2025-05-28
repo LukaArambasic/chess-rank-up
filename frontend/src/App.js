@@ -37,6 +37,8 @@ import AddSection from "./pages/superadmin/sections/AddSection";
 import AllSections from "./pages/superadmin/sections/AllSections";
 import AdminSection from "./pages/superadmin/sections/AdminSection";
 import AddAdmin from "./pages/superadmin/sections/AddAdmin";
+import UsersOptions from "./pages/admin/users/UsersOptions";
+import PassUsers from "./pages/admin/users/PassUsers";
 
 const sections = [
   { id: 1, name: 'Šahovska sekcija', description: 'Igramo šah', to:"/profile" },
@@ -55,6 +57,10 @@ const AdminRoute = () => {
   return (user && sectionRole==="admin") ? <Outlet /> : <Navigate to="/login" />
 }
 
+const SuperAdminRoute = () => {
+  const {user} = useAuth();
+  return user ? <Outlet /> : <Navigate to='/login' replace />
+}
 
 function App() {
 
@@ -63,8 +69,6 @@ function App() {
       <SectionProvider>
         <Router>
           <Routes>
-
-
             <Route path="/register" element={<Registration />} />
             <Route path="/login" element={<Login />} />
             <Route path="/reset" element={<Reset />} />
@@ -82,7 +86,6 @@ function App() {
               <Route path="/scoreboard/semester" element={<Scoreboard name={"Semester"} description={"Bodovi u semestru"} />} />
               <Route path="/scoreboard/year" element={<Scoreboard name={"Year"} description={"Bodovi ove godine"} />} />
               <Route path="/scoreboard/total" element={<Scoreboard name={"Total"} description={"Svi bodovi ikad"}/>} />
-              <Route path="/scoreboard/league" element={<Scoreboard name={"Liga"} description={"Bodovi u Ligi"}/>} />
 
               <Route path="/news" element={<News />} />
               <Route path="/post/:id" element={<Post />} />
@@ -90,32 +93,36 @@ function App() {
               <Route path="/section/:id" element={<Section />} />
             </Route>
 
-            <Route element={<AdminRoute />}>
-              <Route path='/admin' element={<Admin />} />
-              <Route path='/admin/points' element={<PointsOptions />} />
-              <Route path='/admin/points/automatic' element={<AutomaticPoints  />} />
-              <Route path='/admin/points/manual' element={<ManualPoints  />} />
-              <Route path='/admin/events' element={<EventsOptions  />} />
-              <Route path='/admin/events/add' element={<AddEvent  />} />
-              <Route path='/admin/events/all' element={<AllEvents  />} />
-              <Route path='/admin/events/:id' element={<AdminEvent  />} />
-              <Route path='/admin/all-users' element={<AllUsers  />} />
+            <Route element={<AdminRoute />} path='/admin'>
+              <Route path='' element={<Admin />} />
+              <Route path='points' element={<PointsOptions />} />
+              <Route path='points/automatic' element={<AutomaticPoints  />} />
+              <Route path='points/manual' element={<ManualPoints  />} />
+              <Route path='points/manual/:id' element={<ManualPoints  />} />
+              <Route path='events' element={<EventsOptions  />} />
+              <Route path='events/add' element={<AddEvent  />} />
+              <Route path='events/all' element={<AllEvents  />} />
+              <Route path='events/:id' element={<AdminEvent  />} />
+              <Route path='users' element={<UsersOptions  />} />
+              <Route path='users/all' element={<AllUsers  />} />
+              <Route path='users/pass' element={<PassUsers  />} />
             </Route>
 
 
-            <Route path="/superadmin" element={<Superadmin />} />
+              <Route path="/superadmin" element={<Superadmin />} />
+              <Route path="/superadmin/sections" element={<SectionsOptions />} />
+              <Route path="/superadmin/sections/add" element={<AddSection />} />
+              <Route path="/superadmin/sections/all" element={<AllSections />} />
+              <Route path="/superadmin/sections/:id" element={<AdminSection />} />
+              <Route path="/superadmin/sections/:id/edit" element={<AddSection />} />
+              <Route path="/superadmin/sections/:id/add-admin" element={<AddAdmin />} />
 
-            <Route path="/superadmin/sections" element={<SectionsOptions />} />
-            <Route path="/superadmin/sections/add" element={<AddSection />} />
-            <Route path="/superadmin/sections/all" element={<AllSections />} />
-            <Route path="/superadmin/sections/:id" element={<AdminSection />} />
-            <Route path="/superadmin/sections/:id/edit" element={<AddSection />} />
-            <Route path="/superadmin/sections/:id/add-admin" element={<AddAdmin />} />
+              <Route path="/superadmin/semesters" element={<SemestersOptions />} />
+              <Route path="/superadmin/semesters/add" element={<AddSemester />} />
+              <Route path="/superadmin/semesters/all" element={<AllSemesters />} />
+              <Route path="/superadmin/semesters/:id" element={<AddSemester />} />
 
-            <Route path="/superadmin/semesters" element={<SemestersOptions />} />
-            <Route path="/superadmin/semesters/add" element={<AddSemester />} />
-            <Route path="/superadmin/semesters/all" element={<AllSemesters />} />
-            <Route path="/superadmin/semesters/:id" element={<AddSemester />} />
+
 
 
 

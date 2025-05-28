@@ -34,7 +34,7 @@ const AdminSection = () => {
     useEffect(() => {
         setSection({id:id, name:"Šah", description:"Ovo je opis."})
         async function fetchData() {
-            await api.get(`sections/${sectionId}/event/${id}`)
+            await api.get(`sections/${id}`)
                 .then(response => {
                     console.log(response.data)
                     setSection(response.data);
@@ -43,7 +43,7 @@ const AdminSection = () => {
                     console.log("Error fetching data ", error);
                 })
         }
-        //fetchData();
+        fetchData();
     }, []);
 
     const usersData = [
@@ -77,12 +77,6 @@ const AdminSection = () => {
         closeConfirmDialog();
     };
 
-    function formatDateCro(isoDate) {
-        console.log("IsoDate:", isoDate);
-        const [year, month, day] = isoDate.split('-');
-        return `${Number(day)}.${Number(month)}.${year}.`;
-    }
-
     const filteredUsers = admins.filter((user) => {
         const fullName = `${user.name.toLowerCase()} ${user.surname.toLowerCase()}`;
         const query = searchQuery.trim().toLowerCase();
@@ -110,7 +104,7 @@ const AdminSection = () => {
                         <strong>Naziv:</strong> {section.name}
                     </Typography>
                     <Typography>
-                        <strong>Kratki opis:</strong> {section.description}
+                        <strong>Kratki opis:</strong> {section.descriptionUrl}
                     </Typography>
                     <div style={{ width: '90%', margin: '10px 0px' }}>
                         <Button variant="contained" onClick={() => navigate(`edit`)}

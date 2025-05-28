@@ -1,45 +1,112 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
+import {useSection} from "../../../contexts/SectionProvider";
+import api from "../../../api";
 
 const AutomaticPoints = () => {
-  return (
+    const {sectionId} = useSection();
+    const [events, setEvents] = useState([]);
+    const [selectedEvent, setSelectedEvent] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileName, setFileName] = useState('');
+    const [uploadError, setUploadError] = useState('');
+
+    useEffect(() => {
+        async function fetchData() {
+            await api.get(`sections/${sectionId}/event`)
+                .then(response => {
+                    setEvents(response.data);
+                    return api.get(`sections/${sectionId}/members`)
+                })
+                .catch(error => {
+                    console.log("Error fetching data ", error);
+                })
+        }
+
+        fetchData();
+    }, []);
+
+    const handleEventChange = (e) => {
+        setSelectedEvent(e.target.value);
+        setUploadError('');
+    };
+
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setFileName(file.name);
+            setUploadError('');
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!selectedEvent) {
+            setUploadError('Molimo odaberite događaj.');
+            return;
+        }
+        if (!selectedFile) {
+            setUploadError('Molimo uploadajte CSV ili TXT file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('eventId', selectedEvent);
+
+        console.log(selectedEvent);
+        console.log(selectedFile);
+
+        try {
+            await api.post(
+                `sections/${sectionId}/participations/auto/${selectedEvent}`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+            // uspjeh
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            setUploadError('Došlo je do pogreške pri uploadu.');
+        }
+    };
+
+
+    return (
     <div className='container'>
         <TitleContainer title={"Unos bodova"} description={"Unesi bodove za određeni event"} />
 
         <FormControl style={{width:"90%", margin: "10px 0px"}}>
             <InputLabel id="event-label">Odaberi događaj</InputLabel>
-            <Select label="Odaberi događaj" defaultValue="">
-                <MenuItem value={10}>Event 1</MenuItem>
-                <MenuItem value={20}>Event 2</MenuItem>
-                <MenuItem value={30}>Event 3</MenuItem>
+            <Select label="Odaberi događaj" defaultValue="" onChange={handleEventChange}>
+                {events.map(event => {
+                    return (
+                        <MenuItem key={event.id} value={event.id}>{event.name}</MenuItem>
+                    )
+                })}
             </Select>
         </FormControl>
 
         <FormControl style={{width:"90%", margin: "10px 0px"}}>
             <Button variant="outlined" component="label">
                 Upload file
-                <input type="file" hidden />
+                <input type="file" hidden onChange={handleFileChange}/>
             </Button>
         </FormControl>
-      
-      <Button variant="contained" color="primary" style={{width:"90%", margin: "10px 0px"}}>Submit</Button>
+        <div style={{alignSelf: "start", padding:"0 10%"}}>
+            {fileName && (
+                <>"{fileName}" učitan</>
+            )}
+        </div>
+
+        <div style={{alignSelf: "start", padding:"0 10%", color: "darkred"}}>
+            {uploadError}
+        </div>
+
+      <Button variant="contained" color="primary" style={{width:"90%", margin: "10px 0px"}} onClick={handleSubmit}>Submit</Button>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    padding: '20px',
-    backgroundColor: '#f0f4ff',
-    borderRadius: '8px',
-    textAlign: 'center',
-    maxWidth: '400px',
-    margin: '0 auto'
-  },
-  formControl: {
-    margin: '10px 0'
-  }
 };
 
 export default AutomaticPoints;

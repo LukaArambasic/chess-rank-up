@@ -56,7 +56,7 @@ const AllUsers = () => {
 
   return (
     <div className='container'>
-      <TitleContainer title={"Svi korisnici"} description={"Pogledaj listu svih korisnika"} />
+      <TitleContainer title={"Svi članovi"} description={"Pogledaj listu svih korisnika"} />
       <div className='aboutText'>
         <h2>Sudionici</h2>
         <p style={{ color: 'grey' }}>Prikazuje se samo ime, ali možete pretraživati i po JMBAG-u i emailu</p>

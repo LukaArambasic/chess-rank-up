@@ -44,7 +44,7 @@ const AdminEventsPage = () => {
                     console.log("Error fetching data ", error);
                 })
         }
-        //fetchData();
+        fetchData();
     }, []);
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -94,9 +94,9 @@ const AdminEventsPage = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Naziv događaja</TableCell>
-                            <TableCell>Datum</TableCell>
-                            <TableCell>Bodovi</TableCell>
+                            <TableCell>Naziv semestra</TableCell>
+                            <TableCell>Datum početka</TableCell>
+                            <TableCell>Datum kraj</TableCell>
                             <TableCell align="center">Akcije</TableCell>
                         </TableRow>
                     </TableHead>
