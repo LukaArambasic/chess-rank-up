@@ -16,7 +16,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findAllByDateBetweenAndSection_IdOrderByDate(LocalDate dateFrom, LocalDate dateTo, Long idSection);
 
-    List<Event> findAllBySection_Id(Long idSection);
+    List<Event> findAllBySection_IdOrderByDateDesc(Long idSection);
 
     List<Event> findAllBySection_IdAndEventType_Id(Long idSection, Long idEventType);
 

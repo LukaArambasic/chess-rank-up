@@ -20,7 +20,7 @@ public class SectionSemester {
     private Long id;
 
     @Column(name = "threshold", nullable = false)
-    private int threshold;
+    private int threshold = 13;
 
     @Column(name = "points", nullable = false)
     private int points = 0;

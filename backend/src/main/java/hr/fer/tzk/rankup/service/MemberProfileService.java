@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MemberProfileService {
@@ -96,7 +95,7 @@ public class MemberProfileService {
         System.out.println("Here");
         List<ProfileEventDto> events = participations.stream()
                 .filter(participation -> participation.getEvent().getSection().getId().equals(idSection))
-                .map(ParticipationMapper::toDto)
+                .map(ParticipationMapper::toProfileDto)
                 .toList();
 
         String firstName = member.getFirstName();

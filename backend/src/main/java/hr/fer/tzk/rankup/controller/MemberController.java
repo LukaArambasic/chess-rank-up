@@ -1,5 +1,6 @@
 package hr.fer.tzk.rankup.controller;
 
+import hr.fer.tzk.rankup.dto.BasicMemberDto;
 import hr.fer.tzk.rankup.dto.DetailedMemberDto;
 import hr.fer.tzk.rankup.dto.SectionDto;
 import hr.fer.tzk.rankup.dto.SectionMemberDto;

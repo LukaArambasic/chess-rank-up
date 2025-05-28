@@ -2,6 +2,8 @@ package hr.fer.tzk.rankup.service;
 
 import hr.fer.tzk.rankup.dto.BasicMemberDto;
 import hr.fer.tzk.rankup.model.Member;
+import hr.fer.tzk.rankup.model.Participation;
+import hr.fer.tzk.rankup.model.SectionMember;
 import hr.fer.tzk.rankup.repository.MemberRepository;
 import hr.fer.tzk.rankup.repository.SectionMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,4 +76,6 @@ public class MemberService {
 
         return updateMember(existingMember);
     }
+
+
 }

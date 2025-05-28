@@ -22,4 +22,7 @@ public interface SemesterRepository extends JpaRepository<Semester, Long> {
 
     @Query("SELECT s FROM Semester s ORDER BY s.dateTo DESC")
     List<Semester> findAllSemestersOrderedByDateToDesc();
+
+    @Query("SELECT s FROM Semester s WHERE s.dateFrom BETWEEN :dateFrom AND :dateTo OR s.dateTo BETWEEN :dateFrom AND :dateTo")
+    List<Semester> findAllOverlapSemesters(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 }

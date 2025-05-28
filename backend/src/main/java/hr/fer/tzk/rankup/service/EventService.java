@@ -1,23 +1,17 @@
 package hr.fer.tzk.rankup.service;
 
 import hr.fer.tzk.rankup.dto.EventDto;
-import hr.fer.tzk.rankup.form.EventDatesForm;
 import hr.fer.tzk.rankup.form.EventForm;
 import hr.fer.tzk.rankup.mapper.EventMapper;
 import hr.fer.tzk.rankup.model.Event;
 import hr.fer.tzk.rankup.model.EventType;
 import hr.fer.tzk.rankup.model.Section;
-import hr.fer.tzk.rankup.model.SectionMember;
 import hr.fer.tzk.rankup.repository.EventRepository;
 import hr.fer.tzk.rankup.repository.EventTypeRepository;
 import hr.fer.tzk.rankup.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -30,18 +24,20 @@ public class EventService {
     private final EventTypeRepository eventTypeRepository;
     private final SectionService sectionService;
     private final EventTypeService eventTypeService;
+    private final ParticipationService participationService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, SectionRepository sectionRepository, EventTypeRepository eventTypeRepository, SectionService sectionService, EventTypeService eventTypeService) {
+    public EventService(EventRepository eventRepository, SectionRepository sectionRepository, EventTypeRepository eventTypeRepository, SectionService sectionService, EventTypeService eventTypeService, ParticipationService participationService) {
         this.eventRepository = eventRepository;
         this.sectionRepository = sectionRepository;
         this.eventTypeRepository = eventTypeRepository;
         this.sectionService = sectionService;
         this.eventTypeService = eventTypeService;
+        this.participationService = participationService;
     }
 
     public List<EventDto> findAllBySectionId(Long idSection) {
-        List<Event> events = eventRepository.findAllBySection_Id(idSection);
+        List<Event> events = eventRepository.findAllBySection_IdOrderByDateDesc(idSection);
         return events.stream()
                 .map(EventMapper::toDto).
                 toList();
@@ -111,6 +107,7 @@ public class EventService {
         Optional<Event> event = eventRepository.findByIdAndSection_Id(idEvent, idSection);
         if (event.isPresent()) {
             eventRepository.deleteById(idEvent);
+            participationService.deleteAllParticipationsByEventId(idEvent);
             return true;
         }
         return false;

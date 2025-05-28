@@ -78,7 +78,7 @@ public class SectionController {
         }
     }
 
-    @PutMapping("/{idSection}")
+    @PostMapping("/{idSection}")
     public ResponseEntity<SectionDto> updateSection(@PathVariable Long idSection, @Valid @RequestBody SectionForm form) {
         Optional<Section> sectionOpt = sectionService.findSectionById(idSection);
         if (sectionOpt.isEmpty()) {
