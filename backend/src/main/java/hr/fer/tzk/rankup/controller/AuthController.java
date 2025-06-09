@@ -50,7 +50,6 @@ public class AuthController {
     public ResponseEntity<UserDto> me(
             @RequestHeader(name = "Authorization", required = false) String authHeader
     ) {
-        System.out.println("This is very important");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

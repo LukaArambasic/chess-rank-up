@@ -30,7 +30,7 @@ public class SemesterController {
 
     @GetMapping("/{idSemester}")
     public ResponseEntity<Semester> findSemesterById(@PathVariable Long idSemester) {
-        Semester semester = semesterService.findSemesterById(idSemester).get();
+        Semester semester = semesterService.findSemesterById(idSemester).orElse(null);
         return ResponseEntity.ok(semester);
     }
 
@@ -52,7 +52,6 @@ public class SemesterController {
 
     @PostMapping("/{idSemester}")
     public ResponseEntity<Semester> updateSemester(@PathVariable Long idSemester, @Valid @RequestBody SemesterForm semesterForm) {
-        System.out.println("Pozvano");
         Optional<Semester> semesterOpt = semesterService.findSemesterById(idSemester);
         if (semesterOpt.isEmpty()){
             return ResponseEntity.notFound().build();

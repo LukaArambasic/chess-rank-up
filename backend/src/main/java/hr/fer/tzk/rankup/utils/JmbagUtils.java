@@ -31,7 +31,6 @@ public class JmbagUtils {
         if (controlDigitCalculated == 10 || controlDigitCalculated == 11) {
             controlDigitCalculated = 0;
         }
-
         return controlDigitCalculated == controlDigit;
     }
 }

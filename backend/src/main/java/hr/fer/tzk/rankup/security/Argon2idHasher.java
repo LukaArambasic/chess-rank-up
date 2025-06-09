@@ -48,32 +48,32 @@ public class Argon2idHasher extends PasswordHasher {
         PasswordHasher hasher = new Argon2idHasher();
         String salt = hasher.generateSalt();
 
-        System.out.println("Original password: " + password);
-        System.out.println("Salt: " + salt);
-        System.out.println("Salt size: " + salt.length());
+        //System.out.println("Original password: " + password);
+        //System.out.println("Salt: " + salt);
+        //System.out.println("Salt size: " + salt.length());
 
         String hashedPassword = hasher.hashPassword(password, salt);
-        System.out.println("Hashed password: " + hashedPassword);
+        //System.out.println("Hashed password: " + hashedPassword);
 
         if (hasher.checkPassword(password, salt, hashedPassword)) {
-            System.out.println("Correct password");
+            //System.out.println("Correct password");
         } else {
-            System.out.println("Incorrect password");
+            //System.out.println("Incorrect password");
         }
 
-        System.out.println("===================");
+        //System.out.println("===================");
         String[] passwords = {"password1", "password2", "password3"};
         for (int i = 0; i < 3; i++) {
             String p = passwords[i];
             String s = hasher.generateSalt();
             String hp = hasher.hashPassword(p, s);
 
-            System.out.println("Person " + (i + 1) + ": ");
-            System.out.println("Password: " + p);
-            System.out.println("Salt: " + s);
-            System.out.println("Salt size: " + s.length());
-            System.out.println("Hashed password: " + hp);
-            System.out.println("===================\n");
+            //System.out.println("Person " + (i + 1) + ": ");
+            //System.out.println("Password: " + p);
+            //System.out.println("Salt: " + s);
+            //System.out.println("Salt size: " + s.length());
+            //System.out.println("Hashed password: " + hp);
+            //System.out.println("===================\n");
         }
     }
 }

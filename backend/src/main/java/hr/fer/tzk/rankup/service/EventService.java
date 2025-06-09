@@ -107,7 +107,7 @@ public class EventService {
         Optional<Event> event = eventRepository.findByIdAndSection_Id(idEvent, idSection);
         if (event.isPresent()) {
             eventRepository.deleteById(idEvent);
-            participationService.deleteAllParticipationsByEventId(idEvent);
+            participationService.deleteAllParticipationsByEventId(idSection, idEvent);
             return true;
         }
         return false;

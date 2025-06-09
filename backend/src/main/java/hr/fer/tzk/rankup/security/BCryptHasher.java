@@ -40,26 +40,26 @@ public class BCryptHasher extends PasswordHasher {
         PasswordHasher hasher = new BCryptHasher();
         String salt = hasher.generateSalt();
 
-        System.out.println("Original password: " + password);
-        System.out.println("Salt: " + salt);
-        System.out.println("Salt size: " + salt.length());
+        //System.out.println("Original password: " + password);
+        //System.out.println("Salt: " + salt);
+        //System.out.println("Salt size: " + salt.length());
 
         String hashedPassword = hasher.hashPassword(password, salt);
-        System.out.println("Hashed password: " + hashedPassword);
+        //System.out.println("Hashed password: " + hashedPassword);
 
         if (hasher.checkPassword(password, salt, hashedPassword)) {
-            System.out.println("Correct password");
+            //System.out.println("Correct password");
         } else {
-            System.out.println("Incorrect password");
+            //System.out.println("Incorrect password");
         }
 
         String p = "password1";
         String s = "fvF+6y2btWnIKbWSMEywI5xbFiVlg42R";
         String hp = "{bcrypt}$2a$10$aqevOEhrvv9PmrWVmP5yHeCRfPsHw/W.eCDRkmecUJOMPlYbwntTu";
         if (hasher.checkPassword(p, s, hp)) {
-            System.out.println("Correct password");
+            //System.out.println("Correct password");
         } else {
-            System.out.println("Incorrect password");
+            //System.out.println("Incorrect password");
         }
     }
 }

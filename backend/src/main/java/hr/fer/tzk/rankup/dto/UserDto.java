@@ -12,4 +12,5 @@ public class UserDto {
     private String token;
     private String error;
     private Long id;
+    private boolean isSuperAdmin = false;
 }

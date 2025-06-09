@@ -25,6 +25,9 @@ public class SectionSemester {
     @Column(name = "points", nullable = false)
     private int points = 0;
 
+    @Column(name = "peenrolled", nullable = false)
+    private boolean peEnrolled = false;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idsemester", nullable = false)
     private Semester semester;

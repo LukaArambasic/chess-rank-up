@@ -73,7 +73,6 @@ public class SemesterService {
     public boolean checkDateFromAndToWithOthers(SemesterForm semester, Long idSemester) {
         List<Semester> semesters = findAllSemesters();
         List<Semester> semesterList = semesterRepository.findAllOverlapSemesters(semester.getDateFrom(), semester.getDateTo());
-        System.out.println(semesterList.size());
         if (semesterList.isEmpty()) {
             return false;
         } else if (semesterList.size()==1 && semesterList.get(0).getId().equals(idSemester)) {

@@ -6,6 +6,7 @@ import hr.fer.tzk.rankup.form.LoginForm;
 import hr.fer.tzk.rankup.form.RegisterForm;
 import hr.fer.tzk.rankup.mapper.MemberMapper;
 import hr.fer.tzk.rankup.model.Member;
+import hr.fer.tzk.rankup.model.SectionMember;
 import hr.fer.tzk.rankup.security.JwtUtil;
 import hr.fer.tzk.rankup.security.PasswordHasher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,15 @@ public class AuthService {
     private final PasswordHasher passwordHasher;
     private final MemberService memberService;
     private final VerificationService verificationService;
+    private final SectionMemberService sectionMemberService;
 
     @Autowired
-    public AuthService(JwtUtil jwtUtil, @Qualifier("argon2idHasher") PasswordHasher passwordHasher, MemberService memberService, VerificationService verificationService) {
+    public AuthService(JwtUtil jwtUtil, @Qualifier("argon2idHasher") PasswordHasher passwordHasher, MemberService memberService, VerificationService verificationService, SectionMemberService sectionMemberService) {
         this.jwtUtil = jwtUtil;
         this.passwordHasher = passwordHasher;
         this.memberService = memberService;
         this.verificationService = verificationService;
+        this.sectionMemberService = sectionMemberService;
     }
 
     private String checkForConflictRegister(RegisterForm form) {
@@ -48,7 +51,7 @@ public class AuthService {
     public AbstractMap.SimpleEntry<HttpStatus, UserDto> login(LoginForm login) {
         Optional<Member> memberOpt = memberService.findMemberByEmail(login.getEmail());
         if (memberOpt.isEmpty()) {
-            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null));
+            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null, false));
         }
 
         Member member = memberOpt.get();
@@ -56,16 +59,16 @@ public class AuthService {
         String salt = member.getSalt();
 
         if (!passwordHasher.checkPassword(login.getPassword(), salt, storedHash)) {
-            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null));
+            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null, false));
         }
 
         if (!member.isVerified()) {
-            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null));
+            return new AbstractMap.SimpleEntry<>(HttpStatus.BAD_REQUEST, new UserDto(null, null, "Invalid email or password", null, false));
         }
 
         String token = jwtUtil.generateToken(member.getEmail());
         BasicMemberDto memberDto = MemberMapper.toBasicDto(member);
-        UserDto userDto = new UserDto(memberDto, token, null, member.getId());
+        UserDto userDto = new UserDto(memberDto, token, null, member.getId(), isSuperAdmin(member.getId()));
         return new AbstractMap.SimpleEntry<>(HttpStatus.OK, userDto);
     }
 
@@ -117,8 +120,16 @@ public class AuthService {
                 basic,            // user
                 token,            // token
                 null,             // error
-                member.getId()    // id
+                member.getId(),    // id
+                isSuperAdmin(member.getId())
         );
+    }
+
+    private boolean isSuperAdmin(Long memberId) {
+        long sectionId = 1;
+        SectionMember sectionMember = sectionMemberService.findSectionMemberByIdSection(memberId, sectionId).orElse(null);
+
+        return sectionMember!=null && sectionMember.getRank().getName().equals("Superadmin");
     }
 
 }

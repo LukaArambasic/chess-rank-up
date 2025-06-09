@@ -12,12 +12,15 @@ import hr.fer.tzk.rankup.model.Section;
 import hr.fer.tzk.rankup.model.SectionMember;
 import hr.fer.tzk.rankup.service.MemberService;
 import hr.fer.tzk.rankup.service.SectionMemberService;
+import hr.fer.tzk.rankup.service.SectionSemesterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -28,11 +31,13 @@ import java.util.Optional;
 public class MemberController {
     private final MemberService memberService;
     private final SectionMemberService sectionMemberService;
+    private final SectionSemesterService sectionSemesterService;
 
     @Autowired
-    public MemberController(MemberService memberService, SectionMemberService sectionMemberService) {
+    public MemberController(MemberService memberService, SectionMemberService sectionMemberService, SectionSemesterService sectionSemesterService) {
         this.memberService = memberService;
         this.sectionMemberService = sectionMemberService;
+        this.sectionSemesterService =sectionSemesterService;
     }
 
 
@@ -89,6 +94,24 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating member");
         }
     }
+
+    @PostMapping("/many")
+    public ResponseEntity<List<Member>> createManyFromFile(@RequestParam("file") MultipartFile file) {
+        long sectionId = 1;
+        String rank = "Pijun";
+
+        List<Member> members;
+        try {
+            members = memberService.createMembersFromFile(file);
+            List<SectionMember> sectionMembers = sectionMemberService.createSectionMembersMultiple(sectionId, members, rank);
+            sectionMembers.forEach(sectionSemesterService::createSectionSemesterForAllSemesters);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return ResponseEntity.ok(members);
+    }
+
 
     @PutMapping("/{idMember}")
     public ResponseEntity<String> updateMember(@PathVariable Long idMember, @Valid @RequestBody BasicMemberForm member) {

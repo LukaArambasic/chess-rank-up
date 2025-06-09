@@ -2,12 +2,15 @@ package hr.fer.tzk.rankup.controller;
 
 import hr.fer.tzk.rankup.dto.BasicMemberDto;
 import hr.fer.tzk.rankup.dto.DetailedMemberDto;
+import hr.fer.tzk.rankup.dto.EventDto;
 import hr.fer.tzk.rankup.dto.ParticipationDto;
 import hr.fer.tzk.rankup.form.SingleParticipationForm;
+import hr.fer.tzk.rankup.mapper.EventMapper;
 import hr.fer.tzk.rankup.mapper.MemberMapper;
 import hr.fer.tzk.rankup.mapper.ParticipationMapper;
 import hr.fer.tzk.rankup.model.Member;
 import hr.fer.tzk.rankup.model.Participation;
+import hr.fer.tzk.rankup.model.SectionSemester;
 import hr.fer.tzk.rankup.service.ParticipationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +42,12 @@ public class ParticipationController {
     }
 
     @GetMapping("/member/{memberId}")
-    public ResponseEntity<List<ParticipationDto>> findAllParticipationsByMemberId(@PathVariable Long sectionId, @PathVariable Long memberId) {
-        return null;
+    public ResponseEntity<List<EventDto>> findAllParticipationsByMemberId(@PathVariable Long sectionId, @PathVariable Long memberId) {
+        List<EventDto> participationList = participationService.findAllParticipationsByMemberId(memberId)
+                .stream()
+                .map(Participation::getEvent)
+                .map(EventMapper::toDto).toList();
+        return ResponseEntity.ok(participationList);
     }
 
     @GetMapping("/event/{eventId}")
@@ -52,9 +59,9 @@ public class ParticipationController {
         return ResponseEntity.ok(participationList);
     }
 
-    @GetMapping("/pass/{threshold}")
-    public ResponseEntity<List<BasicMemberDto>> findAllWhoPassedThreshold(@PathVariable Long sectionId, @PathVariable Long threshold) {
-        List<Member> members = participationService.findAllWhoPassedThreshold(threshold, sectionId);
+    @GetMapping("/pass/{threshold}/semester/{semesterId}")
+    public ResponseEntity<List<BasicMemberDto>> findAllWhoPassedThreshold(@PathVariable Long sectionId, @PathVariable Long threshold, @PathVariable Long semesterId) {
+        List<Member> members = participationService.findAllWhoPassedThreshold(threshold, sectionId, semesterId);
         List<BasicMemberDto> dtos = members.stream().map(MemberMapper::toBasicDto).toList();
         return ResponseEntity.ok(dtos);
     }
@@ -63,7 +70,7 @@ public class ParticipationController {
 
     @PostMapping
     public ResponseEntity<ParticipationDto> createParticipation(@PathVariable Long sectionId, @Valid @RequestBody SingleParticipationForm form) {
-        Participation participation = participationService.createParticipation(form);
+        Participation participation = participationService.createParticipation(sectionId, form);
         ParticipationDto dto = ParticipationMapper.toDto(participation);
         return ResponseEntity.ok(dto);
     }
@@ -73,13 +80,19 @@ public class ParticipationController {
     public ResponseEntity<List<ParticipationDto>> createParticipationsFromFile(@PathVariable Long sectionId, @PathVariable Long eventId, @RequestParam("file") MultipartFile file){
         List<Participation> participations;
         try {
-            participations = participationService.createMultipleParticipations(eventId, file);
+            participations = participationService.createMultipleParticipations(sectionId, eventId, file);
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
         }
         List<ParticipationDto> participationDtos = participations.stream().map(ParticipationMapper::toDto).toList();
         return ResponseEntity.ok(participationDtos);
 
+    }
+
+    @GetMapping("/check-points/{semesterId}")
+    public ResponseEntity<String> checkPoints(@PathVariable Long sectionId, @PathVariable Long semesterId) {
+        participationService.getPointsAllMembers(semesterId, sectionId);
+        return null;
     }
 
 
@@ -90,12 +103,12 @@ public class ParticipationController {
 
     @DeleteMapping("/{participationId}")
     public ResponseEntity<ParticipationDto> deleteParticipation(@PathVariable Long sectionId, @PathVariable Long participationId) {
-        ParticipationDto participationDto = ParticipationMapper.toDto(participationService.deleteParticipationById(participationId));
+        ParticipationDto participationDto = ParticipationMapper.toDto(participationService.deleteParticipationById(sectionId, participationId));
         return ResponseEntity.ok(participationDto);
     }
     @DeleteMapping("/{eventId}/{memberId}")
     public ResponseEntity<ParticipationDto> deleteParticipationByEventIdAndMemberId(@PathVariable Long sectionId, @PathVariable Long eventId, @PathVariable Long memberId) {
-        Participation participation = participationService.deleteParticipationByEventIdAndMemberId(eventId, memberId);
+        Participation participation = participationService.deleteParticipationByEventIdAndMemberId(sectionId, eventId, memberId);
         ParticipationDto dto = ParticipationMapper.toDto(participation);
         return ResponseEntity.ok(dto);
     }

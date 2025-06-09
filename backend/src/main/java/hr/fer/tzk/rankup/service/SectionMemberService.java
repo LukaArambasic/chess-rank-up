@@ -40,9 +40,10 @@ public class SectionMemberService {
     }
 
     public Optional<SectionMember> createSectionMemberFromJmbagAndRank(Long idSection, String jmbag, String rankName) {
-        Optional<Member> memberOpt = memberService.findMemberByJmbag(jmbag);
+        Optional<Member> memberOpt = memberService.findMemberByJmbag(jmbag.strip());
         Optional<Section> sectionOpt = sectionService.findSectionById(idSection);
         Optional<Rank> rankOpt = rankService.findRankByNameAndSection_Id(rankName, idSection);
+
         if (memberOpt.isEmpty() || sectionOpt.isEmpty() || rankOpt.isEmpty()) {
             return Optional.empty();
         }
@@ -51,5 +52,20 @@ public class SectionMemberService {
         member.setSection(sectionOpt.get());
         member.setRank(rankOpt.get());
         return Optional.of(sectionMemberRepository.save(member));
+    }
+    public SectionMember update(SectionMember sectionMember) {
+        return sectionMemberRepository.save(sectionMember);
+    }
+
+    public List<SectionMember> createSectionMembersMultiple(Long sectionId, List<Member> members, String rank) {
+        List<String> jmbags = members.stream().map(Member::getJmbag).toList();
+        return jmbags.stream().map(jmbag -> createSectionMemberFromJmbagAndRank(sectionId, jmbag, rank).orElse(null)).toList();
+    }
+
+
+    public SectionMember deleteSectionMemberBySectionIdAndMemberId(Long sectionId, Long memberId) {
+        SectionMember sectionMember = sectionMemberRepository.findSectionMemberByMember_IdAndSection_Id(memberId, sectionId).orElseThrow();
+        sectionMemberRepository.delete(sectionMember);
+        return sectionMember;
     }
 }

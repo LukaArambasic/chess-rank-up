@@ -14,7 +14,7 @@ public class SectionForm {
     @Size(max = 30)
     private String name;
 
-    @Size(max = 80)
+    @Size(max = 500)
     private String description;
 
     @Size(max = 80)

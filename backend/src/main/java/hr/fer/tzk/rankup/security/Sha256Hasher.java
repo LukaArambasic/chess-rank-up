@@ -44,11 +44,11 @@ public class Sha256Hasher extends PasswordHasher {
         PasswordHasher hasher = new Sha256Hasher();
         String salt = hasher.generateSalt();
 
-        System.out.println("Original password: " + password);
-        System.out.println("Salt: " + salt);
-        System.out.println("Salt size: " + salt.length());
+        //System.out.println("Original password: " + password);
+        //System.out.println("Salt: " + salt);
+        //System.out.println("Salt size: " + salt.length());
 
         String hashedPassword = hasher.hashPassword(password, salt);
-        System.out.println("Hashed password: " + hashedPassword);
+        //System.out.println("Hashed password: " + hashedPassword);
     }
 }

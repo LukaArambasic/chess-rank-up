@@ -4,12 +4,17 @@ import hr.fer.tzk.rankup.dto.SectionMemberDto;
 import hr.fer.tzk.rankup.form.SectionMemberForm;
 import hr.fer.tzk.rankup.mapper.SectionMemberMapper;
 import hr.fer.tzk.rankup.model.SectionMember;
+import hr.fer.tzk.rankup.model.SectionSemester;
 import hr.fer.tzk.rankup.service.SectionMemberService;
+import hr.fer.tzk.rankup.service.SectionSemesterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -21,10 +26,12 @@ import java.util.Optional;
 public class SectionMemberController {
 
     private final SectionMemberService sectionMemberService;
+    private final SectionSemesterService sectionSemesterService;
 
     @Autowired
-    public SectionMemberController(SectionMemberService sectionMemberService) {
+    public SectionMemberController(SectionMemberService sectionMemberService, SectionSemesterService sectionSemesterService) {
         this.sectionMemberService = sectionMemberService;
+        this.sectionSemesterService = sectionSemesterService;
     }
 
     /**
@@ -74,11 +81,19 @@ public class SectionMemberController {
      */
     @PostMapping
     public ResponseEntity<SectionMemberDto> createSectionMember(@PathVariable Long idSection, @Valid @RequestBody SectionMemberForm member) {
-        Optional<SectionMember> newMemberOpt = sectionMemberService.createSectionMemberFromJmbagAndRank(idSection, member.getJmbag(), member.getRankName());
+        Optional<SectionMember> newMemberOpt =
+                sectionMemberService
+                        .createSectionMemberFromJmbagAndRank(
+                                idSection,
+                                member.getJmbag(),
+                                member.getRankName());
         if (newMemberOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         SectionMember newMember = newMemberOpt.get();
+
+        sectionSemesterService.createSectionSemesterForAllSemesters(newMember);
+
         SectionMemberDto newMemberDto = SectionMemberMapper.toDto(newMember);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -87,5 +102,12 @@ public class SectionMemberController {
                 .toUri();
         return ResponseEntity.status(HttpStatus.CREATED).location(location).body(newMemberDto);
 
+    }
+
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<SectionMemberDto> deleteSectionMember(@PathVariable Long idSection, @PathVariable Long memberId) {
+        SectionMember sectionMember = sectionMemberService.deleteSectionMemberBySectionIdAndMemberId(idSection, memberId);
+        return ResponseEntity.ok(SectionMemberMapper.toDto(sectionMember));
     }
 }

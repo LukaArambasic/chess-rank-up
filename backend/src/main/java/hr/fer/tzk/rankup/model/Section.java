@@ -19,7 +19,7 @@ public class Section {
     @Column(name = "namesection", nullable = false)
     private String name;
 
-    @Column(name = "descriptionsection")
+    @Column(name = "descriptionsection", length = 500)
     private String description;
 
     @Column(name = "logo")
