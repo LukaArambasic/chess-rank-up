@@ -20,7 +20,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../api";
-import {useSection} from "../../../contexts/SectionProvider";
 
 const AdminEventsPage = () => {
     const navigate = useNavigate();
@@ -32,7 +31,6 @@ const AdminEventsPage = () => {
         async function fetchData() {
             await api.get(`sections`)
                 .then(response => {
-                    console.log(response.data)
                     setSections(response.data);
                 })
                 .catch(error => {
@@ -45,18 +43,12 @@ const AdminEventsPage = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [sectionToRemove, setSectionToRemove] = useState(null);
 
-    function formatDateCro(isoDate) {
-        const [year, month, day] = isoDate.split('-');
-        return `${Number(day)}.${Number(month)}.${year}`;
-    }
-
     const handleRowClick = (id) => {
         navigate(`/superadmin/sections/${id}`);
     };
 
     const openConfirmDialog = (section, e) => {
         e.stopPropagation();
-        console.log(section)
         setSectionToRemove(section);
         setDialogOpen(true);
     };
@@ -69,7 +61,6 @@ const AdminEventsPage = () => {
     const confirmRemove = async () => {
         await api.delete(`sections/${sectionToRemove.id}`)
             .then(response => {
-                console.log(response.data);
                 setSections((prev) => prev.filter((ev) => ev.id !== sectionToRemove.id));
             })
             .catch(error => {

@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import {useParams} from "react-router-dom";
 import api from "../../api";
-import login from "../login/Login";
 
 const Post = () => {
     const [post, setPost] = useState();
@@ -20,7 +19,7 @@ const Post = () => {
                 })
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     return (
         <div className="container">

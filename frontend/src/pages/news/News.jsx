@@ -4,7 +4,6 @@ import TitleContainer from "../../components/titleContainer/TitleContainer";
 import { useNavigate } from "react-router-dom";
 import NewsButton from "../../components/button-news/NewsButton";
 import api from "../../api";
-import {options} from "axios";
 
 const News = () => {
     const nav = useNavigate();
@@ -26,7 +25,6 @@ const News = () => {
         async function fetchData() {
             api.get(`/news/section/${1}`)
                 .then(response => {
-                    console.log(response.data)
                     setNewsList(response.data)
                 })
                 .catch(error => {

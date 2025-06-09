@@ -11,16 +11,13 @@ const Login = () => {
 
     useEffect(() => {
         if (user) {
-
-            navigate('/');
+            user.superAdmin?navigate('/superadmin'):navigate('/');
         }
-    }, [user]);
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Here")
         await login(email, password);
-        navigate('/');
 
     }
 

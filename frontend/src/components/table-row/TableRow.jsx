@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "./TableRow.css";
 
 const TableRow = ({event}) => {
-    console.log("Event prop:", event);
-
     const getBackgroundColor = (id) => {
         return id % 2 === 0 ? '#C9D3FF' : '#EEF1FF';  
     };

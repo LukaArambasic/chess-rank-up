@@ -8,6 +8,8 @@ const UsersOptions = () => {
     const timeScales = [
         {id: 1, name: "Svi članovi", to:"all"},
         {id: 2, name: "Dodjela prolaza", to:"pass"},
+        {id: 3, name: "Selekcija", to:"selection"},
+        //{id: 3, name: "Dodaj nove članove", to:"add/many"},
     ]
 
     const handleClick = (time) => {

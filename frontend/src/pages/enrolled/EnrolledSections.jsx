@@ -10,7 +10,6 @@ import {useSection} from "../../contexts/SectionProvider";
 const EnrolledSections = () => {
     const {user} = useAuth();
     const {setSection} = useSection();
-    const [selectedSection, setSelectedSection] = useState(null);
     const nav = useNavigate();
     const [mySections, setMySections] = useState([]);
 
@@ -24,7 +23,7 @@ const EnrolledSections = () => {
             })
         }
         fetchData();
-    }, []);
+    }, [user.id]);
 
     const handleSectionClick = (section) => {
         let role = "user";

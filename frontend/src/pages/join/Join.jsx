@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import JoinButton from "../../components/button-join/JoinButton";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import api from "../../api";
 import {useAuth} from "../../contexts/AuthProvider";
-import {log} from "qrcode/lib/core/galois-field";
 import {useSection} from "../../contexts/SectionProvider";
 
 const Join = () => {
@@ -15,13 +13,11 @@ const Join = () => {
     const {setSection} = useSection();
 
     useEffect(() => {
-        // TODO: Add axios to fetch sections from an API
-        // Example: axios.get('/api/sections').then(response => setSections(response.data));
         async function fetchData() {
             let functionSections = [];
             await api.get("sections")
                 .then(response => {
-                    setSections(response.data);
+                    //setSections(response.data);
                     functionSections = response.data;
                     return api.get(`members/${user.id}/sections`)
                 })
@@ -38,18 +34,20 @@ const Join = () => {
                 })
         }
         fetchData();
-    }, []);
+    }, [user.id]);
 
     const handleSectionClick = (id) => {
         nav(`/section/${id}`)
     };
 
     const handleJoinClick = async (id) => {
-        // TODO: Handle what happens when a section is clicked
-        console.log(`Section clicked:`, {rankName: "Pijun", jmbag: user.jmbag});
-        await api.post(`sections/${id}/members`, {rankName: "Pijun", jmbag: user.jmbag})
-            .then(response => {
-                console.log("Added section successfully!", response.data);
+        const data = {
+            "jmbag": user.jmbag,
+            "rankName": "Pijun"
+        }
+        console.log("this is user jmbag: ", data);
+        await api.post(`sections/${id}/members`, data)
+            .then(_ => {
                 setSection(id, "user");
                 nav(`/profile`);
             })

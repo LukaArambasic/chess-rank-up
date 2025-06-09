@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from "react";
 import './Profile.css';
 import Curved from "../Curved";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import Navigation from "../../components/navigation/Navigation";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChessPawn, faChessBishop, faChessKnight, faChessRook, faChessKing, faChessQueen } from "@fortawesome/free-solid-svg-icons";
 import api from "../../api";
 import QRCode from 'qrcode';
 import {useAuth} from "../../contexts/AuthProvider";
@@ -13,19 +15,41 @@ const Profile = () => {
     const {sectionId} = useSection();
     const [member,setMember] = useState({});
     const [qr, setQr] = useState();
+    const [icon, setIcon] = useState();
 
     useEffect(() => {
+        console.log(sectionId);
         async function fetchData() {
             await api.get(`sections/${sectionId}/members/${user.id}/profile/general`)
                 .then(response => {
+                    console.log(response.data);
                     setMember(response.data);
+                    switch (response.data.rankName) {
+                        case "Pijun":
+                            setIcon(faChessPawn);
+                            break;
+                        case "Lovac":
+                            setIcon(faChessBishop);
+                            break;
+                        case "Skakač":
+                            setIcon(faChessKnight);
+                            break;
+                        case "Top":
+                            setIcon(faChessRook);
+                            break;
+                        case "Kraljica":
+                            setIcon(faChessQueen);
+                            break;
+                        case "Kralj":
+                            setIcon(faChessKing);
+                            break;
+                    }
                     QRCode.toDataURL(response.data.jmbag, {width: 300, margin: 2}).then(url => setQr(url));
-                    console.log("General profile info: ", response.data);
                 })
                 .catch(error => console.error(error));
         }
         fetchData();
-    }, []);
+    }, [sectionId, user.id, icon]);
     
     return (
         <div className="container">
@@ -35,7 +59,11 @@ const Profile = () => {
             <div id="profile" >{member.section} Profil</div>
             <div id="circles">
                 <div id="bigCircle" />
-                <div id="smallCircle" />
+                <div id="smallCircle">
+                    {icon && (
+                        <FontAwesomeIcon icon={icon} size="3x" />
+                    )}
+                </div>
             </div>
             <div id="curved"><Curved /></div>
 

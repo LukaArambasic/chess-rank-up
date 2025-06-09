@@ -1,9 +1,7 @@
 import {useEffect, useState} from 'react';
 import TitleContainer from "../../../components/titleContainer/TitleContainer";
-import {Checkbox, FormControlLabel, TextField, Button} from "@mui/material";
+import {TextField, Button} from "@mui/material";
 import api from "../../../api";
-import {useSection} from "../../../contexts/SectionProvider";
-import {log} from "qrcode/lib/core/galois-field";
 import {useParams} from "react-router-dom";
 
 const AddSection = () => {
@@ -26,7 +24,7 @@ const AddSection = () => {
                 })
         }
         if (id) fetchData();
-    }, []);
+    }, [id]);
 
     const handleCreate = async () => {
         // ovdje su ti već vrijednosti iz inputa
@@ -34,9 +32,6 @@ const AddSection = () => {
             name: name,
             description: description
         })
-            .then(response => {
-                console.log("Successfully created new event!", response.data);
-            })
             .catch(error => {
                 console.log("Error creating new post: ", error)
             })

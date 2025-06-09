@@ -20,7 +20,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
 import { useNavigate } from 'react-router-dom';
 import api from "../../../api";
-import {useSection} from "../../../contexts/SectionProvider";
 
 const AdminEventsPage = () => {
     const navigate = useNavigate();
@@ -37,7 +36,6 @@ const AdminEventsPage = () => {
         async function fetchData() {
             await api.get(`semesters`)
                 .then(response => {
-                    console.log(response.data)
                     setSemesters(response.data);
                 })
                 .catch(error => {
@@ -61,7 +59,6 @@ const AdminEventsPage = () => {
 
     const openConfirmDialog = (semester, e) => {
         e.stopPropagation();
-        console.log(semester)
         setSemesterToRemove(semester);
         setDialogOpen(true);
     };
@@ -74,7 +71,6 @@ const AdminEventsPage = () => {
     const confirmRemove = async () => {
         await api.delete(`semesters/${semesterToRemove.id}`)
             .then(response => {
-                console.log(response.data);
                 setSemesters((prev) => prev.filter((ev) => ev.id !== semesterToRemove.id));
             })
             .catch(error => {

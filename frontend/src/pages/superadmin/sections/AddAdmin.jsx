@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import {
-    Paper,
-    Typography,
     TextField,
     Button,
     Autocomplete,
     Box
 } from '@mui/material';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
-import { useSection } from '../../../contexts/SectionProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const AddAdmin = () => {
     const { id } = useParams(); // section id
-    const { sectionId } = useSection();
     const navigate = useNavigate();
 
     // Dummy members data

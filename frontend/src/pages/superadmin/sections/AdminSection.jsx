@@ -21,22 +21,18 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from "../../../api";
-import {useSection} from "../../../contexts/SectionProvider";
 
 const AdminSection = () => {
     const { id } = useParams();
-    const { sectionId } = useSection();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
     const [section, setSection] = useState(null);
 
     useEffect(() => {
-        setSection({id:id, name:"Šah", description:"Ovo je opis."})
         async function fetchData() {
             await api.get(`sections/${id}`)
                 .then(response => {
-                    console.log(response.data)
                     setSection(response.data);
                 })
                 .catch(error => {
@@ -44,7 +40,7 @@ const AdminSection = () => {
                 })
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     const usersData = [
         { name: 'John', surname: 'Doe', jmbag: '0036530114', email: 'john.doe@example.com' },

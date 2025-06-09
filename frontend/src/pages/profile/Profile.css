@@ -26,6 +26,9 @@
 #smallCircle{
     grid-area: 1 / 1;
     background-color: #7F61BA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 12.5vh;
     height: 12.5vh;
     border-radius: 50%;

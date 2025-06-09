@@ -1,30 +1,25 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import TitleContainer from "../../../components/titleContainer/TitleContainer";
-import {Checkbox, FormControlLabel, TextField, Button} from "@mui/material";
+import {TextField, Button} from "@mui/material";
 import api from "../../../api";
 import {useSection} from "../../../contexts/SectionProvider";
-import {log} from "qrcode/lib/core/galois-field";
 
 const AddEvent = () => {
     const { sectionId } = useSection();
 
     // state varijable za svaki input
     const [name, setName] = useState('');
-    const [date,  setDate]  = useState('');
-    const [points,setPoints]= useState('');
-    const [notify, setNotify] = useState(false);
+    const [date,  setDate]  = useState(new Date(Date.now()).toISOString().split('T')[0]);
+    const [points,setPoints]= useState(1);
 
     const handleCreate = async () => {
         // ovdje su ti već vrijednosti iz inputa
         await api.post(`sections/${sectionId}/event`, {
             name: name,
             date: date,
-            idEventType: points,
+            idEventType: points<=0?1:points>6?6:points,
             description: "Fake.",
         })
-            .then(response => {
-                console.log("Successfully created new event!", response.data);
-            })
             .catch(error => {
                 console.log("Error creating new post: ", error)
             })
@@ -50,9 +45,18 @@ const AddEvent = () => {
             />
 
             <TextField
-                label="Broj bodova"
+                type="number"
+                label="Broj bodova (1-6)"
                 value={points}
-                onChange={e => setPoints(e.target.value)}
+                onChange={e => {
+                    const int = parseInt(e.target.value);
+                    if (isNaN(int)) {
+                        setPoints(0)
+                    } else {
+                        setPoints(int);
+                    }
+
+                }}
                 style={{ width: "90%", margin: "10px 0" }}
             />
 

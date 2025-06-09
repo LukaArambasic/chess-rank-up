@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { Button, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import {Button, MenuItem, Select, InputLabel, FormControl, Autocomplete, TextField} from '@mui/material';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
 import {useSection} from "../../../contexts/SectionProvider";
 import api from "../../../api";
+import InfoAccordion from "../../../components/info-accordion/InfoAccordion";
 
 const AutomaticPoints = () => {
     const {sectionId} = useSection();
@@ -16,7 +17,11 @@ const AutomaticPoints = () => {
         async function fetchData() {
             await api.get(`sections/${sectionId}/event`)
                 .then(response => {
-                    setEvents(response.data);
+                    const newEvents = response.data.map(event => ({
+                        ...event,
+                        label: `${event.name} ${event.date}`
+                    }))
+                    setEvents(newEvents);
                     return api.get(`sections/${sectionId}/members`)
                 })
                 .catch(error => {
@@ -25,7 +30,7 @@ const AutomaticPoints = () => {
         }
 
         fetchData();
-    }, []);
+    }, [sectionId]);
 
     const handleEventChange = (e) => {
         setSelectedEvent(e.target.value);
@@ -56,9 +61,6 @@ const AutomaticPoints = () => {
         formData.append('file', selectedFile);
         formData.append('eventId', selectedEvent);
 
-        console.log(selectedEvent);
-        console.log(selectedFile);
-
         try {
             await api.post(
                 `sections/${sectionId}/participations/auto/${selectedEvent}`,
@@ -77,15 +79,26 @@ const AutomaticPoints = () => {
     <div className='container'>
         <TitleContainer title={"Unos bodova"} description={"Unesi bodove za određeni event"} />
 
-        <FormControl style={{width:"90%", margin: "10px 0px"}}>
-            <InputLabel id="event-label">Odaberi događaj</InputLabel>
-            <Select label="Odaberi događaj" defaultValue="" onChange={handleEventChange}>
-                {events.map(event => {
-                    return (
-                        <MenuItem key={event.id} value={event.id}>{event.name}</MenuItem>
-                    )
-                })}
-            </Select>
+        <InfoAccordion
+            text1={"Stranica za automatski unos bodova. Ovdje je potrebno odabrati događanje i datoteku tipa .txt ili .csv s JMBAG-om svih studenata koji su bili prisutni na tom događanju."}
+            text2={"Aplikacija 'QR Skener' pamti što je skenirala. Iz nje možete preuzeti .txt i .csv datoteke.  "}
+        />
+
+
+        <FormControl style={{width: "90%", margin: "10px 0px"}}>
+            <Autocomplete
+                slotProps={{
+                    popper: {
+                        sx: {
+                            '& .MuiAutocomplete-option': { fontSize: 16, minHeight: 'unset' },
+                        },
+                    },
+                }}
+                value={selectedEvent}
+                onChange={(e, newValue) => setSelectedEvent(newValue)}
+                options={events}
+                renderInput={(params) => <TextField {...params} label="Odaberi događaj" />}
+            />
         </FormControl>
 
         <FormControl style={{width:"90%", margin: "10px 0px"}}>

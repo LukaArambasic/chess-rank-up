@@ -1,141 +1,160 @@
-import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {
+  Box,
+  Paper,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button, FormControl, Autocomplete, TextField
+} from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faBan } from '@fortawesome/free-solid-svg-icons';
 import TitleContainer from '../../../components/titleContainer/TitleContainer';
+import { useNavigate } from 'react-router-dom';
+import api from "../../../api";
+import {useSection} from "../../../contexts/SectionProvider";
 
 const AllUsers = () => {
-  const usersData = [
-    { name: 'John', surname: 'Doe', id: "0036530114", email: "john.doe@example.com", active: true, points: 8, pe: true },
-    { name: 'Jane', surname: 'Smith', id: "0036530113", email: "jane.smith@example.com", active: true, points: 1, pe: false },
-    { name: 'Tom', surname: 'Brown', id: "0036530115", email: "tom.brown@example.com", active: false, points: 10, pe: true },
-  ];
+  const navigate = useNavigate();
+  const {sectionId} = useSection();
 
-  const [users, setUsers] = useState(usersData);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [open, setOpen] = useState(false);
+  // Example initial data; replace or fetch from API as needed
+  const [members, setMembers] = useState();
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  useEffect(() => {
+    async function fetchData() {
+      await api.get(`sections/${sectionId}/members`)
+          .then(response => {
+            setMembers(response.data);
+          })
+          .catch(error => {
+            console.log("Error fetching data ", error);
+          })
+    }
+    fetchData();
+  }, [sectionId]);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState(null);
+
+  const handleRowClick = (id) => {
+    navigate(`/admin/users/${id}`);
   };
 
-  // Filter users based on search input (name, surname, id, or email)
-  const filteredUsers = users.filter((user) => {
-    const fullName = `${user.name.toLowerCase()} ${user.surname.toLowerCase()}`;
-    const searchWords = searchQuery.trim().toLowerCase().split(' ');
+  const openConfirmDialog = (member, e) => {
+    e.stopPropagation();
+    setMemberToRemove(member);
+    setDialogOpen(true);
+  };
 
+  const closeConfirmDialog = () => {
+    setDialogOpen(false);
+    setMemberToRemove(null);
+  };
+
+  const confirmRemove = async () => {
+    await api.delete(`sections/${sectionId}/members/${memberToRemove.memberId}`)
+        .then(response => {
+          setMembers((prev) => prev.filter((member) => member.memberId !== memberToRemove.memberId));
+        })
+        .catch(error => {
+          console.log("Error deleting data, ", error);
+        })
+    closeConfirmDialog();
+  };
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredMembers = members?.filter(member => {
+    const q = searchTerm.trim().toLowerCase();
+    const fullName = `${member.firstName} ${member.lastName}`.toLowerCase();
     return (
-      user.name.toLowerCase().includes(searchWords[0]) ||
-      user.surname.toLowerCase().includes(searchWords[0]) ||
-      user.id.includes(searchQuery) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (searchWords.length > 1 && fullName.includes(searchQuery.toLowerCase()))
+        fullName.includes(q) ||
+        member.jmbag.includes(q)
     );
   });
 
-  // Handle open/close for the pop-up modal
-  const handleOpen = (user) => {
-    setSelectedUser(user);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const togglePEStatus = () => {
-    setUsers(users.map(user => {
-      if (user.id === selectedUser.id) {
-        return { ...user, pe: !user.pe };
-      }
-      return user;
-    }));
-    handleClose();
-  };
 
   return (
-    <div className='container'>
-      <TitleContainer title={"Svi članovi"} description={"Pogledaj listu svih korisnika"} />
-      <div className='aboutText'>
-        <h2>Sudionici</h2>
-        <p style={{ color: 'grey' }}>Prikazuje se samo ime, ali možete pretraživati i po JMBAG-u i emailu</p>
-
-        {/* Search bar */}
-        <TextField
-          label="Pretraži po imenu, JMBAG-u ili emailu"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={handleSearchChange}
-          style={{ marginBottom: '20px' }}
+      <div className='container'>
+        <TitleContainer
+            title="Lista članova"
+            description="Pregled i upravljanje članovima"
         />
 
-        {/* Users Table */}
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Ime</TableCell>
-              <TableCell>Points</TableCell>
-              <TableCell>P.E.</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.surname}, {user.name}</TableCell>
-                  <TableCell>{user.points}</TableCell>
-                  <TableCell>
-                    <div 
-                      onClick={() => handleOpen(user)} 
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%',
-                        backgroundColor: user.pe ? 'red' : 'green'
-                      }}
-                    >
-                      <FontAwesomeIcon 
-                        icon={user.pe ? faTimes : faCheck} 
-                        style={{ color: 'white' }} 
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={3} style={{ textAlign: 'center' }}>Nema korisnika</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        {/* Ovdje ide još filter za usera */}
+        <FilterUsers value={searchTerm} onChange={setSearchTerm} />
 
-      {/* Confirmation Dialog */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{"Promijeni P.E. status"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {`Are you sure you want to ${selectedUser?.pe ? 'remove' : 'add'} ${selectedUser?.name} ${selectedUser?.surname} to P.E.?`}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            No
-          </Button>
-          <Button onClick={togglePEStatus} color="primary">
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Ime i prezime</TableCell>
+                <TableCell>JMBAG</TableCell>
+                <TableCell>Polaže TZK</TableCell>
+                <TableCell align="center">Akcije</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {members && filteredMembers && filteredMembers.map((member) => (
+                  <TableRow
+                      key={member.jmbag}
+                      hover
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleRowClick(member.memberId)}
+                  >
+                    <TableCell>{member.firstName} {member.lastName}</TableCell>
+                    <TableCell>{member.jmbag}</TableCell>
+                    <TableCell>{member.active?"Da":"Ne"}</TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                          onClick={(e) => openConfirmDialog(member, e)}
+                      >
+                        <FontAwesomeIcon icon={faBan} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Confirmation Dialog */}
+        <Dialog open={dialogOpen} onClose={closeConfirmDialog}>
+          <DialogTitle>Potvrdi brisanje</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {`Jeste li sigurni da želite obrisati event "${memberToRemove ? memberToRemove.firstName+' '+memberToRemove.lastName+' '+memberToRemove.jmbag : ''}"?`}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeConfirmDialog}>Otkaži</Button>
+            <Button color="error" onClick={confirmRemove}>Obriši</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
   );
 };
+
+const FilterUsers = ({ value, onChange }) => (
+    <Box mb={2}>
+      <TextField
+          fullWidth
+          label="Pretraži po imenu, prezimenu ili JMBAG"
+          variant="outlined"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+      />
+    </Box>
+);
+
 
 export default AllUsers;

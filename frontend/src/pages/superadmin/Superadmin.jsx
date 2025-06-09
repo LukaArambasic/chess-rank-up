@@ -17,7 +17,7 @@ const Superadmin = () => {
     return (
         <>
             <div className="container">
-                <TitleContainer title={"Admin"} description={"Odaberi što želiš napraviti"}/>
+                <TitleContainer title={"Superadmin"} description={"Odaberi što želiš napraviti"}/>
 
                 <div className="buttonList">
                     {timeScales.map(time => (

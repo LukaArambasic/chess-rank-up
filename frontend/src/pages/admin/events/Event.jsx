@@ -36,16 +36,13 @@ const AdminEvent = () => {
     const [userToRemove, setUserToRemove] = useState(null);
 
     useEffect(() => {
-        console.log("Section id: ",sectionId)
         async function fetchData() {
             await api.get(`sections/${sectionId}/event/${id}`)
                 .then(response => {
-                    console.log(response.data)
                     setEvent(response.data);
                     return api.get(`sections/${sectionId}/participations/event/${id}`)
                 })
                 .then(response => {
-                    console.log(response.data);
                     setUsers(response.data);
                 })
                 .catch(error => {
@@ -53,7 +50,7 @@ const AdminEvent = () => {
                 })
         }
         fetchData();
-    }, []);
+    }, [id, sectionId]);
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -79,9 +76,6 @@ const AdminEvent = () => {
 
     async function deleteUser() {
         await api.delete(`sections/${sectionId}/participations/${id}/${userToRemove.id}`)
-            .then(response => {
-                console.log("Successfully deleted: ", response.data);
-            })
             .catch(error => {
                 console.error("Error deleting data: ", error);
             })
@@ -128,7 +122,7 @@ const AdminEvent = () => {
                 <h2>Sudionici</h2>
 
                 <div style={{ width: '90%', margin: '10px 0px' }}>
-                    <Button variant="contained" onClick={() => navigate(`/admin/points/manual/${id}`)}
+                    <Button variant="contained" onClick={() => navigate(`/admin/points/manual/${id}/0`)}
                     >
                         Dodaj sudionika
                     </Button>

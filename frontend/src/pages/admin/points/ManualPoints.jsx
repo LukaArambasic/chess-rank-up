@@ -6,7 +6,7 @@ import {useSection} from "../../../contexts/SectionProvider";
 import {useParams} from "react-router-dom";
 
 const ManualPoints = () => {
-    const {id} = useParams();
+    const {eventId, memberId} = useParams();
     const {sectionId} = useSection();
     const [events, setEvents] = useState([]);
     const [members, setMembers] = useState([]);
@@ -17,8 +17,14 @@ const ManualPoints = () => {
         async function fetchData() {
             await api.get(`sections/${sectionId}/event`)
                 .then(response => {
-                    setEvents(response.data);
-                    setSelectedEvent(response.data.filter(event => event.id===parseInt(id))[0]);
+                    const newEvents = response.data.map(event => ({
+                        ...event,
+                        label: `${event.name} ${event.date}`
+                    }))
+                    setEvents(newEvents);
+                    const selected = newEvents.filter(event => event.id===parseInt(eventId))[0];
+
+                    setSelectedEvent(selected);
                     return api.get(`sections/${sectionId}/members`)
                 })
                 .then(response => {
@@ -27,6 +33,8 @@ const ManualPoints = () => {
                         id: member.memberId,
                         label: `${member.firstName} ${member.lastName} ${member.jmbag}`
                     }));
+                    const selected = newMembers.filter(member => member.id===parseInt(memberId))[0];
+                    setSelectedMember(selected?selected:null);
                     setMembers(newMembers);
                 })
                 .catch(error => {
@@ -35,20 +43,15 @@ const ManualPoints = () => {
         }
 
         fetchData();
-    }, [sectionId]);
+    }, [sectionId, eventId, memberId]);
 
     const handleSubmit = async () => {
-        // TODO: implement logic
         const requestData = {
             memberId: selectedMember.id,
             eventId: selectedEvent.id
         };
-        console.log(requestData);
 
         await api.post(`sections/${sectionId}/participations`, requestData)
-            .then(response => {
-                console.log("Response.data: ", response.data);
-            })
             .catch(error => {
                 console.error("Error creating data: ", error);
             })
@@ -61,21 +64,30 @@ const ManualPoints = () => {
                     <TitleContainer title={"Unos bodova"} description={"Unesi bodove za određeni event"} />
 
                     <FormControl style={{width: "90%", margin: "10px 0px"}}>
-                        <InputLabel id="event-label">Odaberi događaj</InputLabel>
-                        <Select
-                            labelId="event-label"
+                        <Autocomplete
+                            slotProps={{
+                                popper: {
+                                    sx: {
+                                        '& .MuiAutocomplete-option': { fontSize: 16, minHeight: 'unset' },
+                                    },
+                                },
+                            }}
                             value={selectedEvent}
-                            onChange={(e) => setSelectedEvent(e.target.value)}
-                            label="Odaberi događaj"
-                        >
-                            {events.map(event => (
-                                <MenuItem key={event.id} value={event}>{event.name}</MenuItem>
-                            ))}
-                        </Select>
+                            onChange={(e, newValue) => setSelectedEvent(newValue)}
+                            options={events}
+                            renderInput={(params) => <TextField {...params} label="Odaberi događaj" />}
+                        />
                     </FormControl>
 
                     <FormControl style={{width: "90%", margin: "10px 0px"}}>
                         <Autocomplete
+                            slotProps={{
+                                popper: {
+                                    sx: {
+                                        '& .MuiAutocomplete-option': { fontSize: 16, minHeight: 'unset' },
+                                    },
+                                },
+                            }}
                             value={selectedMember}
                             onChange={(e, newValue) => setSelectedMember(newValue)}
                             options={members}

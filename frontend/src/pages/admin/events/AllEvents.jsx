@@ -13,7 +13,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
-    Button
+    Button, FormControl, Autocomplete, TextField
 } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -27,22 +27,33 @@ const AdminEventsPage = () => {
     const {sectionId} = useSection();
 
     // Example initial data; replace or fetch from API as needed
-    const [events, setEvents] = useState();
+    const [events, setEvents] = useState([]);
+    const [semesters, setSemesters] = useState([]);
+    const [selectedSemester, setSelectedSemester] = useState(null);
 
     useEffect(() => {
-        console.log("Section id: ",sectionId)
         async function fetchData() {
             await api.get(`sections/${sectionId}/event`)
                 .then(response => {
-                    console.log(response.data)
                     setEvents(response.data);
+                    return api.get('semesters')
+                })
+                .then(response => {
+                    response.data.sort((a,b)=>b.dateTo-a.dateTo);
+                    const semesters = response.data.map(semester => {
+                        return {
+                            ...semester,
+                            label: semester.name,
+                        }
+                    })
+                    setSemesters(semesters);
                 })
                 .catch(error => {
                     console.log("Error fetching data ", error);
                 })
         }
         fetchData();
-    }, []);
+    }, [sectionId]);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [eventToRemove, setEventToRemove] = useState(null);
@@ -70,7 +81,6 @@ const AdminEventsPage = () => {
     const confirmRemove = async () => {
         await api.delete(`sections/${sectionId}/event/${eventToRemove.id}`)
             .then(response => {
-                console.log(response.data);
                 setEvents((prev) => prev.filter((ev) => ev.id !== eventToRemove.id));
             })
             .catch(error => {
@@ -82,9 +92,26 @@ const AdminEventsPage = () => {
     return (
         <div className='container'>
             <TitleContainer
-                title="Lista evenata"
-                description="Pregled i upravljanje eventima"
+                title="Sva događanja"
+                description="Pregled i upravljanje događanjima sekcije"
             />
+
+
+            <FormControl style={{width: "90%", margin: "10px 0px"}}>
+                <Autocomplete
+                    slotProps={{
+                        popper: {
+                            sx: {
+                                '& .MuiAutocomplete-option': { fontSize: 16, minHeight: 'unset' },
+                            },
+                        },
+                    }}
+                    value={selectedSemester}
+                    onChange={(e, newValue) => setSelectedSemester(newValue)}
+                    options={semesters}
+                    renderInput={(params) => <TextField {...params} label="Odaberi semestar" />}
+                />
+            </FormControl>
 
             <TableContainer component={Paper}>
                 <Table>
@@ -97,7 +124,15 @@ const AdminEventsPage = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {events && events.map((evt) => (
+                        {events && events.length > 0 && events
+                            .filter(event => {
+                                if (selectedSemester == null) return true;
+                                const eventDate = new Date(event.date);
+                                const dateFrom = new Date(selectedSemester.dateFrom);
+                                const dateTo = new Date(selectedSemester.dateTo);
+                                return (eventDate > dateFrom && eventDate < dateTo);
+                            })
+                            .map((evt) => (
                             <TableRow
                                 key={evt.id}
                                 hover
