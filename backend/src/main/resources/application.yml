@@ -2,7 +2,7 @@ spring:
   application:
     name: tzk-rank-up
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   sql:
     init:
       schema-locations: classpath:schema.sql
