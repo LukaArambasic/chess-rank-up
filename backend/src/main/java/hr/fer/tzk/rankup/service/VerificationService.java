@@ -18,11 +18,11 @@ import java.util.Optional;
 public class VerificationService {
     private final int VERIFICATION_CODE_LENGTH = 64;
     private final VerificationRepository verificationRepository;
-    private final EmailSenderService emailSenderService;
+    //private final EmailSenderService emailSenderService;
 
-    public VerificationService(VerificationRepository verificationRepository, EmailSenderService emailSenderService) {
+    public VerificationService(VerificationRepository verificationRepository) {
         this.verificationRepository = verificationRepository;
-        this.emailSenderService = emailSenderService;
+        //this.emailSenderService = emailSenderService;
     }
 
     public void sendForVerification(Member member) {
@@ -34,10 +34,10 @@ public class VerificationService {
         verification.setMember(member);
 
         verificationRepository.save(verification);
-        sendVerificationEmail(member, verification);
+        //sendVerificationEmail(member, verification);
     }
 
-    private void sendVerificationEmail(Member member, Verification verification) {
+    /*private void sendVerificationEmail(Member member, Verification verification) {
         // TODO: napraviti bolji template; spremiti template negdje
         String content = "Pozdrav,<br>"
                 + "Kliknite na donji link kako bi potvrdili svoju registraciju:<br>"
@@ -54,7 +54,7 @@ public class VerificationService {
         } catch (MessagingException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     public ResponseEntity<String> verify(String URL) {
         Optional<Verification> verification = verificationRepository.findVerificationByUrl(URL);

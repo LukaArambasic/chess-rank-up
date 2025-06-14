@@ -2,23 +2,10 @@ spring:
   application:
     name: tzk-rank-up
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: railway
   sql:
     init:
       schema-locations: classpath:schema.sql
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: email@example.com
-    password: password
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-      protocol: smtp
-      test-connection: false
 server:
   servlet:
     context-path: /api

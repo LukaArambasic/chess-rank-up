@@ -18,6 +18,7 @@ import java.io.IOException;
 @Service
 public class EmailSenderService {
 
+    /*
     // TODO: Set correct information about SMTP account into application.yml
     // Use .env files for security
     @Autowired
@@ -55,4 +56,5 @@ public class EmailSenderService {
 
         javaMailSender.send(message);
     }
+     */
 }

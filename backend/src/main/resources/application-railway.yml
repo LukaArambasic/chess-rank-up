@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}?sslmode=require
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update          # prvi deploy će sam izraditi tablice
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  sql:
+    init:
+      mode: never               # nema schema.sql na produkciji
+server:
+  port: ${PORT:8080}            # Railway šalje PORT env var
