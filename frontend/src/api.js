@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = 'http://localhost:8080/api/';
+const baseURL = 'https://chess-rank-up-production.up.railway.app/api/';
 
 const api = axios.create({
     baseURL: baseURL,

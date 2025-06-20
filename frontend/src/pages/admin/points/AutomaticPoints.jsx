@@ -59,11 +59,11 @@ const AutomaticPoints = () => {
 
         const formData = new FormData();
         formData.append('file', selectedFile);
-        formData.append('eventId', selectedEvent);
+        formData.append('eventId', selectedEvent.id);
 
         try {
             await api.post(
-                `sections/${sectionId}/participations/auto/${selectedEvent}`,
+                `sections/${sectionId}/participations/auto/${selectedEvent.id}`,
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
