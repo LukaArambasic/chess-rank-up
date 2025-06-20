@@ -20,7 +20,7 @@ public class RankUpApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+				registry.addMapping("/**").allowedOrigins("https://chess-rank-up.vercel.app/");
 			}
 		};
 	}
