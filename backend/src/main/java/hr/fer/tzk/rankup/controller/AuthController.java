@@ -37,6 +37,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterForm form) {
+        System.out.println("Pokušaj registracije");
         AbstractMap.SimpleEntry<HttpStatus, String> response = authService.register(form);
         return ResponseEntity.status(response.getKey()).body(response.getValue());
     }
