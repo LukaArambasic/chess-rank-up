@@ -48,6 +48,10 @@ public class MemberService {
 
     public List<Member> createMembersFromFile(MultipartFile file) throws IOException {
         List<Member> members = readMembersFromFile(file);
+        members.forEach(member -> {
+            member.setSalt("yux3DkyVdRfuzEgUUoU6vogUIC/UEhW2");
+            member.setPasswordHash("{argon2id}$argon2id$v=19$m=65536,t=2,p=1$ZC1DBw8RN4PpNR4gSBMnSA$GvYXDiuJrxM6a8u7iBJ2e+F6+AHLqpPyYeG0ktRko+8");
+        });
         //members.forEach(member -> System.out.println(member.getFirstName() + ' ' + member.getLastName() + ' ' + member.getJmbag() + ' ' + member.getEmail()));
         members.forEach(memberRepository::save);
         return members;
