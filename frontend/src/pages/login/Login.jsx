@@ -6,8 +6,8 @@ import {useAuth} from "../../contexts/AuthProvider";
 const Login = () => {
     const navigate = useNavigate()
     const { user, login } = useAuth();
-    const [email, setEmail] = useState('jj56789@fer.hr');
-    const [password, setPassword] = useState('password1');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('Test123!');
 
     useEffect(() => {
         if (user) {
