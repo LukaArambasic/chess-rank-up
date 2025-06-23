@@ -135,7 +135,7 @@ function App() {
               <Route path='users/:id' element={<AdminUser  />} />
               <Route path='users/pass' element={<PassUsers  />} />
               <Route path='users/selection' element={<UsersSelection  />} />
-              {/*<Route path='users/add/many' element={<AddUsersMultiple  />} />*/}
+              <Route path='users/add/many' element={<AddUsersMultiple  />} />
             </Route>
 
             <Route element={<SuperAdminRoute />} path="/superadmin">
