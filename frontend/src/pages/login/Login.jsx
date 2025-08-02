@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import {Box, TextField, Button, Typography, Paper, Container} from "@mui/material";
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import {useAuth} from "../../contexts/AuthProvider";
 
@@ -22,33 +23,72 @@ const Login = () => {
     }
 
     return (
-        <div className="container">
+        <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <TitleContainer title={"Prijava"} description={"Prijavi se!"} />
-            <form className="forma" onSubmit={handleSubmit}>
-                <input
-                    type="email"
-                    className="inputStyle"
-                    placeholder="Email"
+            
+            <Paper 
+                elevation={3} 
+                sx={{ 
+                    p: 4, 
+                    mt: -2, 
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 3
+                }}
+            >
+                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Email"
+                        type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
                 />
-                <input
-                    type="password"
-                    className="inputStyle"
-                    placeholder="Lozinka"
+                    
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Lozinka"
+                        type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                 />
-                <input type="submit" id="submitButton" value="Prijavi se"/>
 
-                <div className="prijava-link">
-                    <p>Nemate korisnički račun? <br /> <Link to="/register"> Registriraj se</Link> </p>
-                    <Link to="/reset"> <span className="ak">Zaboravili ste lozinku?</span></Link>
-                </div>
-            </form> 
-        </div>
+                    
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        size="large"
+                        sx={{ py: 1.5, mt: 2 }}
+                    >
+                        Prijavi se
+                    </Button>
+                    
+                    <Box sx={{ textAlign: 'center', mt: 2 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            Nemate korisnički račun?
+                        </Typography>
+                        <Link to="/register" style={{ textDecoration: 'none' }}>
+                            <Typography variant="body2" color="primary" sx={{ fontWeight: 600 }}>
+                                Registriraj se
+                            </Typography>
+                        </Link>
+                        
+                        <Box sx={{ mt: 2 }}>
+                            <Link to="/reset" style={{ textDecoration: 'none' }}>
+                                <Typography variant="body2" color="secondary" sx={{ fontSize: '0.875rem' }}>
+                                    Zaboravili ste lozinku?
+                                </Typography>
+                            </Link>
+                        </Box>
+                    </Box>
+                </Box>
+            </Paper>
+        </Container>
     );
 }
 

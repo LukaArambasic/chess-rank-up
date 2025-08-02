@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import'./Registration.css';
+import {Box, TextField, Button, Typography, Paper, Container, Alert} from "@mui/material";
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import api from "../../api";
 import { Link, useNavigate } from "react-router-dom";
@@ -116,99 +116,136 @@ const Registration = () => {
         errors[field] && <span className="error-msg">{errors[field]}</span>;
 
     return (
-        <div className="container">
+        <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <TitleContainer
                 title="Registracija"
                 description="Registriraj se da bi se mogao pridružiti sekcijama"
             />
 
-            <form className="forma" onSubmit={handleSubmit} noValidate>
-                <input
-                    name="firstName"
-                    type="text"
-                    className="inputStyle"
-                    placeholder="Ime"
+            <Paper 
+                elevation={3} 
+                sx={{ 
+                    p: 4, 
+                    mt: -2, 
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 3
+                }}
+            >
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Ime"
+                        name="firstName"
+                        type="text"
                     value={form.firstName}
                     onChange={handleChange}
                     required
-                    maxLength={30}
+                        inputProps={{ maxLength: 30 }}
+                        error={!!errors.firstName}
+                        helperText={errors.firstName}
                 />
-                {renderError("firstName")}
 
-                <input
-                    name="lastName"
-                    type="text"
-                    className="inputStyle"
-                    placeholder="Prezime"
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Prezime"
+                        name="lastName"
+                        type="text"
                     value={form.lastName}
                     onChange={handleChange}
                     required
-                    maxLength={30}
+                        inputProps={{ maxLength: 30 }}
+                        error={!!errors.lastName}
+                        helperText={errors.lastName}
                 />
-                {renderError("lastName")}
 
-                <input
-                    name="email"
-                    type="email"
-                    className="inputStyle"
-                    placeholder="Email"
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Email"
+                        name="email"
+                        type="email"
                     value={form.email}
                     onChange={handleChange}
                     required
-                    maxLength={50}
+                        inputProps={{ maxLength: 50 }}
+                        error={!!errors.email}
+                        helperText={errors.email}
                 />
-                {renderError("email")}
 
-                <input
-                    name="jmbag"
-                    type="text"
-                    className="inputStyle"
-                    placeholder="JMBAG (10 znamenki)"
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="JMBAG (10 znamenki)"
+                        name="jmbag"
+                        type="text"
                     value={form.jmbag}
                     onChange={handleChange}
                     required
-                    maxLength={10}
+                        inputProps={{ maxLength: 10 }}
+                        error={!!errors.jmbag}
+                        helperText={errors.jmbag}
                 />
-                {renderError("jmbag")}
 
-                <input
-                    name="password"
-                    type="password"
-                    className="inputStyle"
-                    placeholder="Lozinka"
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Lozinka"
+                        name="password"
+                        type="password"
                     value={form.password}
                     onChange={handleChange}
                     required
-                    minLength={8}
-                    maxLength={30}
+                        inputProps={{ minLength: 8, maxLength: 30 }}
+                        error={!!errors.password}
+                        helperText={errors.password}
                 />
-                {renderError("password")}
 
-                <input
-                    name="repeatPassword"
-                    type="password"
-                    className="inputStyle"
-                    placeholder="Ponovi lozinku"
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="Ponovi lozinku"
+                        name="repeatPassword"
+                        type="password"
                     value={form.repeatPassword}
                     onChange={handleChange}
                     required
-                    minLength={8}
-                    maxLength={30}
+                        inputProps={{ minLength: 8, maxLength: 30 }}
+                        error={!!errors.repeatPassword}
+                        helperText={errors.repeatPassword}
                 />
-                {renderError("repeatPassword")}
 
-                <input type="submit" id="submitButton" value="Registriraj se" />
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        size="large"
+                        sx={{ py: 1.5, mt: 2 }}
+                    >
+                        Registriraj se
+                    </Button>
 
-                {statusMsg && <p className="status-msg">{statusMsg}</p>}
+                    {statusMsg && (
+                        <Alert severity={statusMsg.includes('uspješna') ? 'success' : 'error'} sx={{ mt: 2 }}>
+                            {statusMsg}
+                        </Alert>
+                    )}
 
-                <div className="prijava-link">
-                    <p>
-                        Već imate račun? <br />
-                        <Link to="/login">Prijavi se</Link>
-                    </p>
-                </div>
-            </form>
-        </div>
+                    <Box sx={{ textAlign: 'center', mt: 2 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            Već imate račun?
+                        </Typography>
+                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                            <Typography variant="body2" color="primary" sx={{ fontWeight: 600 }}>
+                                Prijavi se
+                            </Typography>
+                        </Link>
+                    </Box>
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 
