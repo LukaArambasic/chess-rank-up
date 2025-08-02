@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import {Box, TextField, Button, Typography, Paper, Container, Alert} from "@mui/material";
+import {Box, TextField, Button, Typography, Paper, Container, Alert, InputAdornment, IconButton} from "@mui/material";
+import {Visibility, VisibilityOff, Email, Person, Badge, Lock} from "@mui/icons-material";
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import api from "../../api";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +18,8 @@ const Registration = () => {
     const [form, setForm] = useState(initialForm);
     const [errors, setErrors] = useState({});
     const [statusMsg, setStatusMsg] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const navigate = useNavigate();
 
     /* ------------- HELPER VALIDATORS ------------- */
@@ -116,37 +119,55 @@ const Registration = () => {
         errors[field] && <span className="error-msg">{errors[field]}</span>;
 
     return (
-        <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <TitleContainer
-                title="Registracija"
-                description="Registriraj se da bi se mogao pridružiti sekcijama"
-            />
+        <Container maxWidth="sm" sx={{ 
+            minHeight: '100vh', 
+            display: 'flex', 
+            flexDirection: 'column',
+            justifyContent: 'center',
+            py: 4
+        }}>
+            <Box sx={{ textAlign: 'center', mb: 4 }}>
+                <Typography variant="h1" sx={{ color: 'primary.main', mb: 1 }}>
+                    Create Account
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                    Join the community today
+                </Typography>
+            </Box>
 
             <Paper 
-                elevation={3} 
+                elevation={0} 
                 sx={{ 
-                    p: 4, 
-                    mt: -2, 
-                    borderRadius: 4,
+                    p: 6, 
+                    borderRadius: 3,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 3
+                    gap: 3,
+                    background: 'linear-gradient(135deg, #FFFFFF 0%, #F7FAFC 100%)',
                 }}
             >
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', gap: 3.5 }}>
                     <TextField
                         fullWidth
                         variant="outlined"
                         label="Ime"
                         name="firstName"
                         type="text"
-                    value={form.firstName}
-                    onChange={handleChange}
-                    required
+                        value={form.firstName}
+                        onChange={handleChange}
+                        required
                         inputProps={{ maxLength: 30 }}
                         error={!!errors.firstName}
                         helperText={errors.firstName}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Person sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <TextField
                         fullWidth
@@ -154,13 +175,21 @@ const Registration = () => {
                         label="Prezime"
                         name="lastName"
                         type="text"
-                    value={form.lastName}
-                    onChange={handleChange}
-                    required
+                        value={form.lastName}
+                        onChange={handleChange}
+                        required
                         inputProps={{ maxLength: 30 }}
                         error={!!errors.lastName}
                         helperText={errors.lastName}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Person sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <TextField
                         fullWidth
@@ -168,13 +197,21 @@ const Registration = () => {
                         label="Email"
                         name="email"
                         type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
+                        value={form.email}
+                        onChange={handleChange}
+                        required
                         inputProps={{ maxLength: 50 }}
                         error={!!errors.email}
                         helperText={errors.email}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Email sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <TextField
                         fullWidth
@@ -182,47 +219,99 @@ const Registration = () => {
                         label="JMBAG (10 znamenki)"
                         name="jmbag"
                         type="text"
-                    value={form.jmbag}
-                    onChange={handleChange}
-                    required
+                        value={form.jmbag}
+                        onChange={handleChange}
+                        required
                         inputProps={{ maxLength: 10 }}
                         error={!!errors.jmbag}
                         helperText={errors.jmbag}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Badge sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <TextField
                         fullWidth
                         variant="outlined"
                         label="Lozinka"
                         name="password"
-                        type="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    required
+                        type={showPassword ? 'text' : 'password'}
+                        value={form.password}
+                        onChange={handleChange}
+                        required
                         inputProps={{ minLength: 8, maxLength: 30 }}
                         error={!!errors.password}
                         helperText={errors.password}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Lock sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <TextField
                         fullWidth
                         variant="outlined"
                         label="Ponovi lozinku"
                         name="repeatPassword"
-                        type="password"
-                    value={form.repeatPassword}
-                    onChange={handleChange}
-                    required
+                        type={showRepeatPassword ? 'text' : 'password'}
+                        value={form.repeatPassword}
+                        onChange={handleChange}
+                        required
                         inputProps={{ minLength: 8, maxLength: 30 }}
                         error={!!errors.repeatPassword}
                         helperText={errors.repeatPassword}
-                />
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Lock sx={{ color: 'text.secondary' }} />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                                        edge="end"
+                                    >
+                                        {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ '& .MuiOutlinedInput-root': { height: '56px' } }}
+                    />
 
                     <Button 
                         type="submit" 
                         variant="contained" 
                         size="large"
-                        sx={{ py: 1.5, mt: 2 }}
+                        sx={{ 
+                            py: 2, 
+                            mt: 2, 
+                            fontSize: '1rem',
+                            background: 'linear-gradient(135deg, #805AD5 0%, #553C9A 100%)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #9F7AEA 0%, #805AD5 100%)',
+                            }
+                        }}
                     >
                         Registriraj se
                     </Button>
@@ -233,12 +322,12 @@ const Registration = () => {
                         </Alert>
                     )}
 
-                    <Box sx={{ textAlign: 'center', mt: 2 }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Box sx={{ textAlign: 'center', mt: 3 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                             Već imate račun?
                         </Typography>
                         <Link to="/login" style={{ textDecoration: 'none' }}>
-                            <Typography variant="body2" color="primary" sx={{ fontWeight: 600 }}>
+                            <Typography variant="body2" color="secondary" sx={{ fontWeight: 600, '&:hover': { textDecoration: 'underline' } }}>
                                 Prijavi se
                             </Typography>
                         </Link>
