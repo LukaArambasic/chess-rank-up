@@ -1,104 +1,410 @@
-import React, {useEffect, useState} from "react";
-import './Profile.css';
-import Curved from "../Curved";
-import {Link} from "react-router-dom";
-import Navigation from "../../components/navigation/Navigation";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChessPawn, faChessBishop, faChessKnight, faChessRook, faChessKing, faChessQueen } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  CardActionArea,
+  Typography,
+  Box,
+  Paper,
+  Avatar,
+  Stack,
+  Chip,
+  LinearProgress,
+  Divider,
+  IconButton
+} from '@mui/material';
+import {
+  Person,
+  EmojiEvents,
+  TrendingUp,
+  School,
+  QrCode,
+  Activity,
+  Star,
+  Timeline,
+  CheckCircle
+} from '@mui/icons-material';
+import TitleContainer from "../../components/titleContainer/TitleContainer";
 import api from "../../api";
 import QRCode from 'qrcode';
-import {useAuth} from "../../contexts/AuthProvider";
-import {useSection} from "../../contexts/SectionProvider";
+import { useAuth } from "../../contexts/AuthProvider";
+import { useSection } from "../../contexts/SectionProvider";
+
+// Chess piece icons mapping
+const getRankIcon = (rankName) => {
+  const iconMap = {
+    "Pijun": "♟",
+    "Lovac": "♗", 
+    "Skakač": "♘",
+    "Top": "♖",
+    "Kraljica": "♕",
+    "Kralj": "♔"
+  };
+  return iconMap[rankName] || "♟";
+};
+
+const getRankColor = (rankName) => {
+  const colorMap = {
+    "Pijun": "#9E9E9E",
+    "Lovac": "#795548", 
+    "Skakač": "#607D8B",
+    "Top": "#FF9800",
+    "Kraljica": "#E91E63",
+    "Kralj": "#FFD700"
+  };
+  return colorMap[rankName] || "#9E9E9E";
+};
 
 const Profile = () => {
-    const {user} = useAuth();
-    const {sectionId} = useSection();
-    const [member,setMember] = useState({});
-    const [qr, setQr] = useState();
-    const [icon, setIcon] = useState();
+  const { user } = useAuth();
+  const { sectionId } = useSection();
+  const navigate = useNavigate();
+  const [member, setMember] = useState({});
+  const [qr, setQr] = useState();
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        console.log(sectionId);
-        async function fetchData() {
-            await api.get(`sections/${sectionId}/members/${user.id}/profile/general`)
-                .then(response => {
-                    console.log(response.data);
-                    setMember(response.data);
-                    switch (response.data.rankName) {
-                        case "Pijun":
-                            setIcon(faChessPawn);
-                            break;
-                        case "Lovac":
-                            setIcon(faChessBishop);
-                            break;
-                        case "Skakač":
-                            setIcon(faChessKnight);
-                            break;
-                        case "Top":
-                            setIcon(faChessRook);
-                            break;
-                        case "Kraljica":
-                            setIcon(faChessQueen);
-                            break;
-                        case "Kralj":
-                            setIcon(faChessKing);
-                            break;
-                    }
-                    QRCode.toDataURL(response.data.jmbag, {width: 300, margin: 2}).then(url => setQr(url));
-                })
-                .catch(error => console.error(error));
-        }
-        fetchData();
-    }, [sectionId, user.id, icon]);
-    
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`sections/${sectionId}/members/${user.id}/profile/general`);
+        setMember(response.data);
+        
+        // Generate QR code
+        const qrUrl = await QRCode.toDataURL(response.data.jmbag, { 
+          width: 300, 
+          margin: 2,
+          color: {
+            dark: '#2D3748',
+            light: '#FFFFFF'
+          }
+        });
+        setQr(qrUrl);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (sectionId && user?.id) {
+      fetchData();
+    }
+  }, [sectionId, user?.id]);
+
+  const calculateProgress = () => {
+    const needed = member.additionalPointsNeeded || 0;
+    const current = member.pointsSemester || 0;
+    const total = current + needed;
+    return total > 0 ? (current / total) * 100 : 0;
+  };
+
+  const getProgressColor = () => {
+    const progress = calculateProgress();
+    if (progress >= 80) return 'success';
+    if (progress >= 50) return 'warning';
+    return 'error';
+  };
+
+  if (loading) {
     return (
-        <div className="container">
-            <div style={{width:"100%", padding: "2vh 5vw 0 5vw", boxSizing:"border-box", zIndex:1000}}>
-                <Navigation />
-            </div>
-            <div id="profile" >{member.section} Profil</div>
-            <div id="circles">
-                <div id="bigCircle" />
-                <div id="smallCircle">
-                    {icon && (
-                        <FontAwesomeIcon icon={icon} size="3x" />
-                    )}
-                </div>
-            </div>
-            <div id="curved"><Curved /></div>
-
-            <div className="whiteBackgroundContainer"> 
-                <p className="profileText">{member.firstName} {member.lastName}, {member.jmbag}</p>
-                <div className="twoContainer">
-                    <div className="pointsContainer" id="lijevi">
-                        <p className="pointsTitle">Bodovi <br /> u semestru </p>
-                        <p className="pointsNumber">{member.pointsSemester}</p>
-                        <p className="pointsPass">Do prolaza: <span className="pointsMini">{member.additionalPointsNeeded}</span></p>
-                    </div>
-
-                    <div className="pointsContainer" id="desni">
-                        <p className="pointsTitle" id="ri">Ukupan <br /> broj bodova</p>
-                        <p className="pointsNumber">{member.pointsTotal}</p>
-                    </div>
-                </div>
-
-                <div className="twoContainer">
-
-                    <Link to="/profile/activity">
-                        <div className="activity">
-                            Aktivnost
-                        </div>
-                    </Link>
-                </div>
-             
-                <img src={qr} className="slikica" alt="JMBAG" style={{width: "300px"}}/>
-          
-            </div>
-
-            
-
-        </div>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <TitleContainer title="Profil" description="Učitavanje..." />
+        <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.secondary">
+            Učitavanje profila...
+          </Typography>
+        </Container>
+      </Box>
     );
-}
+  }
+
+  return (
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <TitleContainer 
+        title={`${member.section} Profil`} 
+        description={`${member.firstName} ${member.lastName}`} 
+      />
+      
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* Profile Header Card */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            mb: 4,
+            background: 'linear-gradient(135deg, #805AD5 0%, #553C9A 100%)',
+            color: 'white',
+            borderRadius: 3,
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: -50,
+              right: -50,
+              width: 200,
+              height: 200,
+              borderRadius: '50%',
+              background: 'rgba(255, 255, 255, 0.1)',
+              zIndex: 0
+            }}
+          />
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
+              <Avatar
+                sx={{
+                  width: 120,
+                  height: 120,
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                  border: '4px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '3rem',
+                  fontWeight: 'bold'
+                }}
+              >
+                {getRankIcon(member.rankName)}
+              </Avatar>
+              
+              <Box sx={{ textAlign: { xs: 'center', md: 'left' }, flexGrow: 1 }}>
+                <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
+                  {member.firstName} {member.lastName}
+                </Typography>
+                <Stack direction="row" spacing={2} justifyContent={{ xs: 'center', md: 'flex-start' }} sx={{ mb: 2 }}>
+                  <Chip
+                    icon={<School />}
+                    label={member.jmbag}
+                    sx={{ 
+                      bgcolor: 'rgba(255, 255, 255, 0.2)', 
+                      color: 'white',
+                      '& .MuiChip-icon': { color: 'white' }
+                    }}
+                  />
+                  <Chip
+                    label={member.rankName}
+                    sx={{ 
+                      bgcolor: getRankColor(member.rankName), 
+                      color: 'white',
+                      fontWeight: 600
+                    }}
+                  />
+                </Stack>
+                <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  Član sekcije: {member.section}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
+        </Paper>
+
+        <Grid container spacing={4}>
+          {/* Points Cards */}
+          <Grid item xs={12} md={8}>
+            <Grid container spacing={3}>
+              {/* Semester Points */}
+              <Grid item xs={12} sm={6}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    background: 'linear-gradient(135deg, #38A169 0%, #2F855A 100%)',
+                    color: 'white'
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Stack spacing={2}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                          Bodovi u semestru
+                        </Typography>
+                        <TrendingUp sx={{ fontSize: 32, opacity: 0.8 }} />
+                      </Box>
+                      
+                      <Typography variant="h2" component="div" sx={{ fontWeight: 700 }}>
+                        {member.pointsSemester || 0}
+                      </Typography>
+                      
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                            Do prolaza
+                          </Typography>
+                          <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                            {member.additionalPointsNeeded || 0} bodova
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={calculateProgress()}
+                          sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            bgcolor: 'rgba(255, 255, 255, 0.3)',
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: 'white',
+                              borderRadius: 4
+                            }
+                          }}
+                        />
+                      </Box>
+                      
+                      {member.additionalPointsNeeded <= 0 && (
+                        <Chip
+                          icon={<CheckCircle />}
+                          label="Položeno!"
+                          size="small"
+                          sx={{ 
+                            bgcolor: 'rgba(255, 255, 255, 0.2)', 
+                            color: 'white',
+                            '& .MuiChip-icon': { color: 'white' }
+                          }}
+                        />
+                      )}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Total Points */}
+              <Grid item xs={12} sm={6}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    background: 'linear-gradient(135deg, #805AD5 0%, #553C9A 100%)',
+                    color: 'white'
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Stack spacing={2}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                          Ukupni bodovi
+                        </Typography>
+                        <EmojiEvents sx={{ fontSize: 32, opacity: 0.8 }} />
+                      </Box>
+                      
+                      <Typography variant="h2" component="div" sx={{ fontWeight: 700 }}>
+                        {member.pointsTotal || 0}
+                      </Typography>
+                      
+                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        Svi bodovi ikad prikupljeni
+                      </Typography>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Star sx={{ fontSize: 20, opacity: 0.8 }} />
+                        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                          Rang: {member.rankName}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Activity Button */}
+              <Grid item xs={12}>
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%)',
+                    border: '1px solid',
+                    borderColor: 'grey.200',
+                    transition: 'all 0.3s ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(0,0,0,0.12)'
+                    }
+                  }}
+                >
+                  <CardActionArea
+                    component={Link}
+                    to="/profile/activity"
+                    sx={{ p: 3 }}
+                  >
+                    <Stack direction="row" alignItems="center" spacing={3}>
+                      <Avatar
+                        sx={{
+                          bgcolor: 'primary.main',
+                          width: 56,
+                          height: 56
+                        }}
+                      >
+                        <Timeline sx={{ fontSize: 28 }} />
+                      </Avatar>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
+                          Pregled aktivnosti
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                          Pogledajte detaljnu listu svih vaših događanja i bodova
+                        </Typography>
+                      </Box>
+                      <Activity sx={{ fontSize: 32, color: 'primary.main' }} />
+                    </Stack>
+                  </CardActionArea>
+                </Card>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* QR Code Card */}
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                height: 'fit-content',
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #F7FAFC 100%)',
+                border: '1px solid',
+                borderColor: 'grey.200'
+              }}
+            >
+              <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                <Stack spacing={3} alignItems="center">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <QrCode sx={{ color: 'primary.main' }} />
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      QR Kod
+                    </Typography>
+                  </Box>
+                  
+                  <Divider sx={{ width: '100%' }} />
+                  
+                  {qr && (
+                    <Box
+                      sx={{
+                        p: 2,
+                        bgcolor: 'white',
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'grey.200',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      <img 
+                        src={qr} 
+                        alt="JMBAG QR Code" 
+                        style={{ 
+                          width: '200px', 
+                          height: '200px',
+                          display: 'block'
+                        }} 
+                      />
+                    </Box>
+                  )}
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                    Skenirajte ovaj kod za brzu identifikaciju na događanjima
+                  </Typography>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
 
 export default Profile;
