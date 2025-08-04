@@ -181,10 +181,10 @@ const Activity = () => {
               fontWeight: 900,
               textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
             }}>
-              VAŠA SPORTSKA PRIČA
+              PREGLED AKTIVNOSTI
             </Typography>
             <Typography variant="h6" sx={{ opacity: 0.9 }}>
-              Svaki bod, svaki događaj, svaki korak prema vrhu! 🚀
+              Detaljni pregled svih vaših događanja i bodova 📊
             </Typography>
           </Box>
         </Paper>
@@ -394,10 +394,10 @@ const Activity = () => {
         >
           <LocalFireDepartment sx={{ fontSize: 48, mb: 2, opacity: 0.9 }} />
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
-            Nastavi graditi svoju legendu! 💪
+            Odličan napredak! 💪
           </Typography>
           <Typography variant="body1" sx={{ opacity: 0.9 }}>
-            Svaki događaj te čini jačim. Svaki bod te približava vrhu! 🔥
+            Svaki događaj doprinosi vašem uspjehu. Nastavite s dobrim radom!
           </Typography>
         </Paper>
       </Container>

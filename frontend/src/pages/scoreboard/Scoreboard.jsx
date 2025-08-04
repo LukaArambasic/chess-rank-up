@@ -128,11 +128,11 @@ const Scoreboard = ({ name, description }) => {
   if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        <TitleContainer title="🏆 Loading..." description="Priprema se arena..." />
+        <TitleContainer title="Učitavanje..." description="Priprema se ljestvica..." />
         <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
           <Paper sx={{ p: 6, background: getScoreboardGradient(), color: 'white' }}>
             <Speed sx={{ fontSize: 64, mb: 2, animation: 'spin 2s linear infinite' }} />
-            <Typography variant="h5">Učitavanje ratnika...</Typography>
+            <Typography variant="h5">Učitavanje ljestvice...</Typography>
           </Paper>
         </Container>
       </Box>
@@ -180,10 +180,10 @@ const Scoreboard = ({ name, description }) => {
             position: 'relative',
             zIndex: 1
           }}>
-            {scoreboard.length} RATNIKA U ARENI
+            {scoreboard.length} ČLANOVA NA LJESTVICI
           </Typography>
           <Typography variant="h6" sx={{ opacity: 0.9, position: 'relative', zIndex: 1 }}>
-            Tko će vladati ovom kategorijom? 🔥
+            Pregled svih članova u ovoj kategoriji
           </Typography>
         </Paper>
 
@@ -199,7 +199,7 @@ const Scoreboard = ({ name, description }) => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
             }}>
-              🏆 PODIJ POBJEDNIKA 🏆
+              🏆 TOP 3 ČLANA 🏆
             </Typography>
             
             <Grid container spacing={3} justifyContent="center">
@@ -338,7 +338,7 @@ const Scoreboard = ({ name, description }) => {
             color: 'white'
           }}>
             <Typography variant="h5" sx={{ fontWeight: 700, textAlign: 'center' }}>
-              📊 KOMPLETNA LJESTVICA
+              📊 POTPUNA LJESTVICA
             </Typography>
           </Box>
           
@@ -441,10 +441,10 @@ const Scoreboard = ({ name, description }) => {
         >
           <Shield sx={{ fontSize: 48, mb: 2, opacity: 0.9 }} />
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
-            Borba se nastavlja! 💪
+            Odličan rad svima! 💪
           </Typography>
           <Typography variant="body1" sx={{ opacity: 0.9 }}>
-            Svaki bod te približava vrhu. Nastavi borbu, ratniče! 🔥
+            Svaki bod je korak prema uspjehu. Nastavite s dobrim radom!
           </Typography>
         </Paper>
       </Container>

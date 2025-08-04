@@ -32,36 +32,36 @@ const ScoreboardList = () => {
       id: 1,
       name: "Semestar",
       title: "Trenutni Semestar",
-      description: "Borba za vrh ovog semestra! Tko će dominirati?",
+      description: "Bodovi prikupljeni u trenutnom semestru",
       icon: <LocalFireDepartment sx={{ fontSize: 48 }} />,
       gradient: "linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)",
       color: "#FF6B35",
       to: "semester",
-      badge: "🔥 LIVE",
-      subtitle: "Aktivno natjecanje"
+      badge: "TRENUTNO",
+      subtitle: "Ovaj semestar"
     },
     {
       id: 2,
       name: "Godina",
       title: "Godišnji Rang",
-      description: "Najbolji performeri kroz cijelu godinu. Legendarni status!",
+      description: "Bodovi prikupljeni kroz cijelu akademsku godinu",
       icon: <EmojiEvents sx={{ fontSize: 48 }} />,
       gradient: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
       color: "#FFD700",
       to: "year",
-      badge: "👑 ELITE",
-      subtitle: "Godišnji prvaci"
+      badge: "GODIŠNJE",
+      subtitle: "Akademska godina"
     },
     {
       id: 3,
       name: "Ukupno",
-      title: "Hall of Fame",
-      description: "Vječni rekorderi! Najveće legende svih vremena.",
+      title: "Ukupni Bodovi",
+      description: "Svi bodovi prikupljeni kroz sve semestre",
       icon: <Shield sx={{ fontSize: 48 }} />,
       gradient: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
       color: "#8B5CF6",
       to: "total",
-      badge: "⚡ LEGEND",
+      badge: "UKUPNO",
       subtitle: "Svi bodovi ikad"
     }
   ];

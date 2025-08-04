@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .App-logo {
@@ -39,8 +40,6 @@
 
 
 .forma{
-
-  background-color: white;
   width: 75vw;
   margin-top: -4vh;
   padding-top: 4vh;
@@ -53,6 +52,7 @@
   z-index: 3; 
   border-radius: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .inputStyle {
@@ -60,12 +60,12 @@
   border-radius: 10px;
   width: 56vw;
   height: 5.5vh;
-  background-color: #EEF1FF;
   border: none;
   outline: none;
   border-radius: 10px;
   font-size: 18px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .inputStyle::placeholder{
@@ -93,7 +93,6 @@
   text-shadow: 0px 1px 1px #00000040;
   box-sizing: border-box;
   border: none;
-  background-color: white;
   color: #7F61BA;
   border-radius: 10px;
   cursor: pointer;
