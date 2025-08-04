@@ -21,7 +21,6 @@ import {
   EmojiEvents,
   TrendingUp,
   School,
-  QrCode,
   Assessment,
   Star,
   Timeline,
@@ -29,7 +28,6 @@ import {
 } from '@mui/icons-material';
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 import api from "../../api";
-import QRCode from 'qrcode';
 import { useAuth } from "../../contexts/AuthProvider";
 import { useSection } from "../../contexts/SectionProvider";
 
@@ -63,7 +61,6 @@ const Profile = () => {
   const { sectionId } = useSection();
   const navigate = useNavigate();
   const [member, setMember] = useState({});
-  const [qr, setQr] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,17 +69,6 @@ const Profile = () => {
         setLoading(true);
         const response = await api.get(`sections/${sectionId}/members/${user.id}/profile/general`);
         setMember(response.data);
-        
-        // Generate QR code
-        const qrUrl = await QRCode.toDataURL(response.data.jmbag, { 
-          width: 300, 
-          margin: 2,
-          color: {
-            dark: '#2D3748',
-            light: '#FFFFFF'
-          }
-        });
-        setQr(qrUrl);
       } catch (error) {
         console.error('Error fetching profile data:', error);
       } finally {
@@ -203,7 +189,7 @@ const Profile = () => {
 
         <Grid container spacing={4}>
           {/* Points Cards */}
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12}>
             <Grid container spacing={3}>
               {/* Semester Points */}
               <Grid item xs={12} sm={6}>
@@ -348,58 +334,6 @@ const Profile = () => {
                 </Card>
               </Grid>
             </Grid>
-          </Grid>
-
-          {/* QR Code Card */}
-          <Grid item xs={12} md={4}>
-            <Card
-              sx={{
-                height: 'fit-content',
-                background: 'linear-gradient(135deg, #FFFFFF 0%, #F7FAFC 100%)',
-                border: '1px solid',
-                borderColor: 'grey.200'
-              }}
-            >
-              <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                <Stack spacing={3} alignItems="center">
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <QrCode sx={{ color: 'primary.main' }} />
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      QR Kod
-                    </Typography>
-                  </Box>
-                  
-                  <Divider sx={{ width: '100%' }} />
-                  
-                  {qr && (
-                    <Box
-                      sx={{
-                        p: 2,
-                        bgcolor: 'white',
-                        borderRadius: 2,
-                        border: '1px solid',
-                        borderColor: 'grey.200',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                      }}
-                    >
-                      <img 
-                        src={qr} 
-                        alt="JMBAG QR Code" 
-                        style={{ 
-                          width: '200px', 
-                          height: '200px',
-                          display: 'block'
-                        }} 
-                      />
-                    </Box>
-                  )}
-                  
-                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-                    Skenirajte ovaj kod za brzu identifikaciju na događanjima
-                  </Typography>
-                </Stack>
-              </CardContent>
-            </Card>
           </Grid>
         </Grid>
       </Container>

@@ -26,15 +26,18 @@ import {
   AdminPanelSettings as AdminIcon,
   SupervisorAccount as SuperAdminIcon,
   Logout as LogoutIcon,
-  Login as LoginIcon
+  Login as LoginIcon,
+  QrCode as QrCodeIcon
 } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSection } from "../../contexts/SectionProvider";
 import { useAuth } from "../../contexts/AuthProvider";
+import QrCodeDisplay from '../qr-code/QrCodeDisplay';
 
 const TitleContainer = ({ title, description }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [qrDialogOpen, setQrDialogOpen] = useState(false);
     const navigate = useNavigate();
     const { sectionId, sectionRole } = useSection();
     const { user, logout } = useAuth();
@@ -59,6 +62,10 @@ const TitleContainer = ({ title, description }) => {
         setDrawerOpen(false);
     };
 
+    const handleQrCodeClick = () => {
+        setQrDialogOpen(true);
+        setDrawerOpen(false);
+    };
     const getMenuItems = () => {
         if (!user) {
             return [
@@ -71,13 +78,15 @@ const TitleContainer = ({ title, description }) => {
         if (user && !sectionRole) {
             return [
                 { text: 'Home', icon: <HomeIcon />, action: () => navigate("/") },
+                { text: 'QR Kod', icon: <QrCodeIcon />, action: handleQrCodeClick },
                 { text: 'O aplikaciji', icon: <HelpIcon />, action: () => navigate("/about") },
                 { text: 'Odjava', icon: <LogoutIcon />, action: handleLogout, primary: true }
             ];
         }
 
         const baseItems = [
-            { text: 'Home', icon: <HomeIcon />, action: () => navigate("/") }
+            { text: 'Home', icon: <HomeIcon />, action: () => navigate("/") },
+            { text: 'QR Kod', icon: <QrCodeIcon />, action: handleQrCodeClick }
         ];
 
         if (sectionRole === "user") {
@@ -217,6 +226,14 @@ const TitleContainer = ({ title, description }) => {
                     ))}
                 </List>
             </Drawer>
+
+            {/* QR Code Dialog */}
+            <QrCodeDisplay
+                open={qrDialogOpen}
+                onClose={() => setQrDialogOpen(false)}
+                jmbag={user?.jmbag}
+                userName={user ? `${user.firstName} ${user.lastName}` : ''}
+            />
         </>
     );
 };
