@@ -214,7 +214,7 @@ const HomePage = () => {
                           <Typography variant="h6" component="h3" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
                             {news.title}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                          <Typography variant="body2" color="text.primary" sx={{ lineHeight: 1.6, opacity: 0.8 }}>
                             {news.content ? news.content.substring(0, 120) + '...' : 'Kliknite za više detalja...'}
                           </Typography>
                           <Box sx={{ pt: 1 }}>
