@@ -22,7 +22,7 @@ import {
   TrendingUp,
   School,
   QrCode,
-  Activity,
+  Assessment,
   Star,
   Timeline,
   CheckCircle
@@ -342,7 +342,7 @@ const Profile = () => {
                           Pogledajte detaljnu listu svih vaših događanja i bodova
                         </Typography>
                       </Box>
-                      <Activity sx={{ fontSize: 32, color: 'primary.main' }} />
+                      <Assessment sx={{ fontSize: 32, color: 'primary.main' }} />
                     </Stack>
                   </CardActionArea>
                 </Card>
