@@ -127,7 +127,7 @@ const TitleContainer = ({ title, description }) => {
                         <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 0.5 }}>
                             {title}
                         </Typography>
-                        <Typography variant="body1" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                        <Typography variant="body1" sx={{ color: 'white', fontWeight: 500 }}>
                             {description}
                         </Typography>
                     </Box>
