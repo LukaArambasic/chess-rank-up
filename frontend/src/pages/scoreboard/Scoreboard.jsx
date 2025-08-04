@@ -208,28 +208,28 @@ const Scoreboard = ({ name, description }) => {
                 <Zoom in timeout={800}>
                   <Card sx={{ 
                     ...getPositionStyle(2),
-                    height: 280,
+                    height: { xs: 200, sm: 280 },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     textAlign: 'center',
-                    transform: 'translateY(40px)'
+                    transform: { xs: 'translateY(20px)', sm: 'translateY(40px)' }
                   }}>
                     <CardContent>
                       <Avatar sx={{ 
-                        width: 80, 
-                        height: 80, 
+                        width: { xs: 60, sm: 80 }, 
+                        height: { xs: 60, sm: 80 }, 
                         mx: 'auto', 
                         mb: 2,
                         bgcolor: 'rgba(255,255,255,0.2)',
-                        fontSize: '2rem'
+                        fontSize: { xs: '1.5rem', sm: '2rem' }
                       }}>
                         🥈
                       </Avatar>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                         {scoreboard[1]?.firstName} {scoreboard[1]?.lastName}
                       </Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 900 }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
                         {scoreboard[1]?.points}
                       </Typography>
                       <Typography variant="body2" sx={{ opacity: 0.9 }}>
@@ -245,7 +245,7 @@ const Scoreboard = ({ name, description }) => {
                 <Zoom in timeout={1000}>
                   <Card sx={{ 
                     ...getPositionStyle(1),
-                    height: 320,
+                    height: { xs: 240, sm: 320 },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
@@ -255,10 +255,10 @@ const Scoreboard = ({ name, description }) => {
                     <Box
                       sx={{
                         position: 'absolute',
-                        top: -10,
+                        top: { xs: -8, sm: -10 },
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        fontSize: '2rem',
+                        fontSize: { xs: '1.5rem', sm: '2rem' },
                         animation: 'bounce 2s ease-in-out infinite'
                       }}
                     >
@@ -266,20 +266,20 @@ const Scoreboard = ({ name, description }) => {
                     </Box>
                     <CardContent>
                       <Avatar sx={{ 
-                        width: 100, 
-                        height: 100, 
+                        width: { xs: 80, sm: 100 }, 
+                        height: { xs: 80, sm: 100 }, 
                         mx: 'auto', 
                         mb: 2,
                         bgcolor: 'rgba(255,255,255,0.2)',
-                        fontSize: '3rem',
+                        fontSize: { xs: '2.5rem', sm: '3rem' },
                         border: '3px solid rgba(255,255,255,0.5)'
                       }}>
                         🏆
                       </Avatar>
-                      <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
+                      <Typography variant="h5" sx={{ fontWeight: 800, mb: 1, fontSize: { xs: '1.25rem', sm: '1.5rem' } }}>
                         {scoreboard[0]?.firstName} {scoreboard[0]?.lastName}
                       </Typography>
-                      <Typography variant="h3" sx={{ fontWeight: 900, mb: 1 }}>
+                      <Typography variant="h3" sx={{ fontWeight: 900, mb: 1, fontSize: { xs: '2rem', sm: '3rem' } }}>
                         {scoreboard[0]?.points}
                       </Typography>
                       <Typography variant="body1" sx={{ opacity: 0.9 }}>
@@ -295,28 +295,28 @@ const Scoreboard = ({ name, description }) => {
                 <Zoom in timeout={600}>
                   <Card sx={{ 
                     ...getPositionStyle(3),
-                    height: 280,
+                    height: { xs: 200, sm: 280 },
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     textAlign: 'center',
-                    transform: 'translateY(40px)'
+                    transform: { xs: 'translateY(20px)', sm: 'translateY(40px)' }
                   }}>
                     <CardContent>
                       <Avatar sx={{ 
-                        width: 80, 
-                        height: 80, 
+                        width: { xs: 60, sm: 80 }, 
+                        height: { xs: 60, sm: 80 }, 
                         mx: 'auto', 
                         mb: 2,
                         bgcolor: 'rgba(255,255,255,0.2)',
-                        fontSize: '2rem'
+                        fontSize: { xs: '1.5rem', sm: '2rem' }
                       }}>
                         🥉
                       </Avatar>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                         {scoreboard[2]?.firstName} {scoreboard[2]?.lastName}
                       </Typography>
-                      <Typography variant="h4" sx={{ fontWeight: 900 }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>
                         {scoreboard[2]?.points}
                       </Typography>
                       <Typography variant="body2" sx={{ opacity: 0.9 }}>
