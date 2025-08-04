@@ -20,7 +20,7 @@ import {
   Star,
   LocalFireDepartment,
   Speed,
-  Military
+  Shield
 } from '@mui/icons-material';
 import TitleContainer from "../../components/titleContainer/TitleContainer";
 
@@ -57,7 +57,7 @@ const ScoreboardList = () => {
       name: "Ukupno",
       title: "Hall of Fame",
       description: "Vječni rekorderi! Najveće legende svih vremena.",
-      icon: <Military sx={{ fontSize: 48 }} />,
+      icon: <Shield sx={{ fontSize: 48 }} />,
       gradient: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)",
       color: "#8B5CF6",
       to: "total",
@@ -126,7 +126,7 @@ const ScoreboardList = () => {
                 <EmojiEvents sx={{ fontSize: 32 }} />
               </Avatar>
               <Avatar sx={{ bgcolor: '#8B5CF6', width: 60, height: 60 }}>
-                <Military sx={{ fontSize: 32 }} />
+                <Shield sx={{ fontSize: 32 }} />
               </Avatar>
             </Stack>
             

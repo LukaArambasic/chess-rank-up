@@ -20,7 +20,7 @@ import {
   LocalFireDepartment,
   Star,
   TrendingUp,
-  Military,
+  Shield,
   Speed,
   Whatshot,
   FlashOn
@@ -439,7 +439,7 @@ const Scoreboard = ({ name, description }) => {
             borderRadius: 3
           }}
         >
-          <Military sx={{ fontSize: 48, mb: 2, opacity: 0.9 }} />
+          <Shield sx={{ fontSize: 48, mb: 2, opacity: 0.9 }} />
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 700 }}>
             Borba se nastavlja! 💪
           </Typography>
